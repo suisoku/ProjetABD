@@ -49,24 +49,24 @@ Create table Adresse
 Create table CodePromo
 (
   code      varchar2(250),
-  reduction float   NOT NULL,
+  reduction float       NOT NULL,
   used      varchar2(1) NOT NULL,
   idClient  integer,
   primary key (code, idClient),
   Foreign key (idClient) references Client (idClient),
-  constraint codeProm_c1 check ( used in ('1','0'))
+  constraint codeProm_c1 check ( used in ('1', '0'))
 );
 
 
 -- Comment on retrouve l utilisation d un code promo dans une commande?
 Create table Commande
 (
-  idCommande    integer primary key ,
+  idCommande    integer primary key,
   idClient      integer,
   datePaiemant  date          NOT NULL,
   montant       integer       NOT NULL,
-  historise varchar2(5) NOT NULL,
-	renduPdf varchar2(250) NOT NULL,
+  historise     varchar2(5)   NOT NULL,
+  renduPdf      varchar2(250) NOT NULL,
   statut        varchar2(250) NOT NULL,
   modeLivraison varchar2(250) NOT NULL,
   constraint commande_c1 check (statut in ('EnCoursPreparation', 'EnCoursLivraison', 'Livre', 'Annule')),
@@ -99,23 +99,24 @@ Create table Photo
 
 Create table Impression
 (
-  idImpression integer primary key ,
+  idImpression integer primary key,
   idClient     integer,
   nom          varchar2(250) NOT NULL,
   Foreign key (idClient) references Client (idClient)
 );
-create TABLE Commande_Impression (
-  idCommande integer,
+create TABLE Commande_Impression
+(
+  idCommande   integer,
   idImpression integer,
-  quantite integer not null,
-  primary key (idCommande,idImpression),
-  foreign key (idCommande) references Commande(idCommande),
-  foreign key (idImpression) references Impression(idImpression)
+  quantite     integer not null,
+  primary key (idCommande, idImpression),
+  foreign key (idCommande) references Commande (idCommande),
+  foreign key (idImpression) references Impression (idImpression)
 );
 Create table Photo_Impression
 (
-  idPhoto                  integer,
-  idImpression             integer,
+  idPhoto                   integer,
+  idImpression              integer,
   specificationParticuliere varchar2(250) NOT NULL,
   primary key (idPhoto, idImpression),
   Foreign key (idPhoto) references Photo (idPhoto),
@@ -128,13 +129,13 @@ Create table Photo_Tirage_Impression
   idImpression integer,
   quantite     integer NOT NULL,
   primary key (idPhoto, idImpression),
-  Foreign key (idPhoto,idImpression) references Photo_Impression (idPhoto,idImpression)
+  Foreign key (idPhoto, idImpression) references Photo_Impression (idPhoto, idImpression)
 );
 
 Create table Inventaire
 (
   idProduit       int primary key,
-  nomCommercial  varchar2(250) NOT NULL,
+  nomCommercial   varchar2(250) NOT NULL,
   caracteristique varchar2(250),
   stock           int           NOT NULL,
   prix            int           NOT NULL
@@ -171,16 +172,16 @@ Create table TirageProduit
 
 Create table Cadre
 (
-  idImpression integer primary key ,
-  idProduit integer,
-  miseEnpage varchar2(20),
+  idImpression integer primary key,
+  idProduit    integer,
+  miseEnpage   varchar2(20),
   Foreign key (idImpression) references Impression (idImpression),
-  foreign key (idProduit) references CadreProduit(idProduit)
+  foreign key (idProduit) references CadreProduit (idProduit)
 );
 
 Create table Agenda
 (
-  idImpression integer primary key ,
+  idImpression integer primary key,
   idProduit    integer,
   typeAgenda   varchar2(250) NOT NULL,
   modele       varchar2(250) NOT NULL,
@@ -191,7 +192,7 @@ Create table Agenda
 
 Create table Calendrier
 (
-  idImpression   integer primary key ,
+  idImpression   integer primary key,
   idProduit      int,
   typeCalendrier varchar2(250) NOT NULL,
   constraint calendrier_c1 check ( typeCalendrier in ('Bureau', 'Mural')),
@@ -201,7 +202,7 @@ Create table Calendrier
 
 Create table Album
 (
-  idImpression integer primary key ,
+  idImpression integer primary key,
   idProduit    int,
   titre        varchar2(250) NOT NULL,
   miseEnPage   varchar2(250) NOT NULL,
@@ -212,7 +213,7 @@ Create table Album
 
 Create table Tirage
 (
-  idImpression     integer primary key ,
+  idImpression     integer primary key,
   idProduit        int,
   formatImpression varchar2(250) NOT NULL,
   nbrExemplaire    int           NOT NULL,
@@ -223,11 +224,11 @@ Create table Tirage
 
 Create table Admin
 (
-  idAdmin   integer primary key,
-  mail      varchar2(250) NOT NULL,
-  nom       varchar2(250) NOT NULL,
-  prenom    varchar2(250) NOT NULL,
-  mdp       varchar2(250) NOT NULL
+  idAdmin integer primary key,
+  mail    varchar2(250) NOT NULL,
+  nom     varchar2(250) NOT NULL,
+  prenom  varchar2(250) NOT NULL,
+  mdp     varchar2(250) NOT NULL
 );
 
 Create table AdminClient
@@ -271,3 +272,48 @@ Create table AdminCommande
   Foreign key (idAdmin) references Admin (idAdmin),
   Foreign key (idCommande) references Commande (idCommande)
 );
+
+insert into Client values (1,'cbzakaria95','CHOUKCHOU BRAHAM','Zakaria','lol123',078491779);
+select * from Client;
+
+insert into Image values ('/usr/tmp/1.jpg',1,'2K',1,'10-JAN-19');
+insert into Image values ('/usr/tmp/69.jpg',1,'2K',1,'11-JAN-19');
+select * from Image;
+
+
+-- Function that count the difference between the date of today and the date passed in parameters
+create or replace function countDays (date IN date) RETURN
+  number IS
+Begin
+  return trunc(sysdate - date);
+end;
+/
+commit ;
+select countDays('10-jan-19') from dual;
+
+create or replace procedure deleteNoUsedImages IS
+  begin
+  delete from Image
+    where countDays(dateUtilisation) >= 10;
+  end;
+/
+
+call DELETENOUSEDIMAGES();
+
+begin
+DBMS_SCHEDULER.CREATE_JOB (
+   job_name           =>  'deleteNoUsedImagesJob',
+   job_type           =>  'STORED_PROCEDURE',
+   job_action         =>  'deleteNoUsedImages',
+   start_date         =>  systimestamp,
+   repeat_interval    =>  'FREQ = DAILY',
+   end_date           =>  null,
+   auto_drop          =>  false,
+   comments           =>  'image(s) deleted');
+END;
+/
+select * from ALL_SCHEDULER_JOBS;
+
+call dbms_scheduler.run_job('deleteNoUsedImagesJob');
+
+call dbms_scheduler.drop_job('deleteNoUsedImagesJob');
