@@ -45,6 +45,7 @@ create or replace procedure deleteNoUsedImages IS
   end;
 /
 
+
 begin
 DBMS_SCHEDULER.CREATE_JOB (
    job_name           =>  'deleteNoUsedImagesJob',
@@ -57,8 +58,19 @@ DBMS_SCHEDULER.CREATE_JOB (
    comments           =>  'image(s) deleted');
 END;
 /
-select * from ALL_SCHEDULER_JOBS;
 
 call dbms_scheduler.run_job('deleteNoUsedImagesJob');
 
-call dbms_scheduler.drop_job('deleteNoUsedImagesJob');
+
+-- Trigger which updates Image Date when ever the image is used in photo --
+CREATE or Replace trigger updateImageTable
+  after insert or update  on Photo
+  for each row
+  begin
+    update Image
+      set dateUtilisation = sysdate
+    where chemin = :NEW.chemin;
+  end;
+/
+
+
