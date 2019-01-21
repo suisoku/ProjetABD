@@ -1,4 +1,3 @@
-call dbms_scheduler.drop_job('deleteNoUsedImagesJob');
 drop table AdminCommande;
 drop table AdminClient;
 drop table AdminImage;
