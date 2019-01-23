@@ -3,14 +3,15 @@ package dataInterfaces;
 public class Client {
 	
 	private int idClient;
-	private String nom, prenom, mail, telephone;
+	private String nom, prenom, mail, telephone, mdp;
 	
-	public Client (int id, String nom, String prenom, String mail, String telephone ) {
+	public Client (int id, String mail, String nom, String prenom, String mdp, String telephone ) {
 		this.setIdClient(id);
 		this.setNom(nom);
 		this.setPrenom(prenom);
 		this.setMail(mail);
 		this.setTelephone(telephone);
+		this.setMdp(mdp);
 	}
 	
 	/******* Getters and Setters **********/
@@ -38,6 +39,14 @@ public class Client {
 
 	public void setMail(String mail) {
 		this.mail = mail;
+	}
+
+	public void setMdp(String mdp) {
+		this.mdp = mdp;
+	}
+
+	public String getMdp() {
+		return mdp;
 	}
 
 	public String getTelephone() {
