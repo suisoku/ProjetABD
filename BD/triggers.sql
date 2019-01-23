@@ -64,8 +64,8 @@ create or replace trigger commandePossible
   for each row
   declare
     nb number;
-    begin
-   select count(*) into nb
+  begin
+    select count(*) into nb
     from COMMANDE_IMPRESSION ci join (select IDIMPRESSION,IDPRODUIT from CADRE
                                       union
                                       select IDIMPRESSION,IDPRODUIT from AGENDA
@@ -88,9 +88,36 @@ create or replace trigger commandePossible
       on imp.IDPRODUIT = Inv. IDPRODUIT join INVENTAIRE i on inv.IDPRODUIT = i.IDPRODUIT
     where i.STOCK >= ci.QUANTITE and ci.IDCOMMANDE = :new.IDCOMMANDE and :new.STATUT = 'EnCoursLivraison';
     if nb <> 0 then raise_application_error(-20100,'Produit non disponible');end if;
-    end;
+  end;
+/
+
+
+-- First Insert into commande table the status must be "EnCoursPreparation" --
+
+create or replace trigger insertIntoCommande
+  after insert on COMMANDE
+  for each row
+  begin
+    if (:NEW.STATUT <> 'EnCoursPreparation')
+      then raise_application_error(-20100,'le statut de l insertion d une commande a la première fois doit etre: EnCoursPreparation');
+    end if ;
+  end;
 /
 -- Trigger R9 & R10 --
+
+
+-- Update Montant for the Commande (C) whenever we add impression (X) to (C)
+
+create or replace trigger updateCommadePrice
+  after insert or update on COMMANDE_IMPRESSION
+  declare
+    prixTotalArticl : number;
+  begin
+
+  end;
+/
+
+
 
 select c.NOM, p.CHEMIN
   from image i join photo p on i.CHEMIN = p.CHEMIN

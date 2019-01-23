@@ -55,12 +55,9 @@ insert into CodePromo values (5,0.20,'1',5);
 
 
 insert into Commande values (1,1,'20-JAN-2019',69,1,'wtf','EnCoursPreparation','PointRelais');
-update COMMANDE
-set STATUT = 'EnCoursLivraison'
-where IDCOMMANDE = 1;
 insert into Commande values (2,2,'19-JAN-2019',70,0,'wtf','EnCoursLivraison','Domicile');
-insert into Commande values (3,3,'18-JAN-2019',75,1,'wtf','Livre','PointRelais');
-insert into Commande values (4,4,'17-JAN-2019',85,0,'wtf','Annule','Domicile');
+insert into Commande values (3,3,'18-JAN-2019',75,1,'wtf','EnCoursPreparation','PointRelais');
+insert into Commande values (4,4,'17-JAN-2019',85,0,'wtf','EnCoursPreparation','Domicile');
 insert into Commande values (5,5,'16-JAN-2019',90,1,'wtf','EnCoursPreparation','PointRelais');
 
 
