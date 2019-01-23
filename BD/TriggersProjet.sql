@@ -1,3 +1,12 @@
+drop trigger trigger_codePromo;
+drop trigger trigger_GenerationCodePromo;
+drop trigger trigger_ImageUsed;
+drop trigger trigger_Statut_Commande;
+drop trigger trigger_insert_Commande;
+drop trigger trigger_delete_commande;
+
+
+
 --Des codes de promo sont donnés et ne sont utilisables qu'une seule fois par client
 -- pour une future commande (offre promotionnelle). Ce code est ensuite automatiquement supprimé.
 create or replace trigger trigger_codePromo
@@ -34,7 +43,7 @@ end;
 
 
 -- Un client ne peut utiliser un fichier partagé par une autre personne
--- que si lui-même partage au moins un fichier.
+-- que si lui-même partage au moins un fichier. (ATTENTIOOOOON)
 create or replace trigger trigger_ImageUsed
 after insert on Client_Use_Image
 for each row
@@ -85,3 +94,20 @@ begin
   end if;
 end;
 /
+
+--On ne peut pas effacer une commande historise
+create or replace trigger trigger_delete_commande
+before delete on commande
+for each row
+begin
+  if :old.historise=1 then
+    raise_application_error(-20107,'Une commande historise ne peut pas etre effacer');
+  end if;
+end;
+/
+
+/*
+Faire des contraintes dans les tables sur les entiers >0
+Triggers qui mettront à jours l inventaire après une commande
+triggers qui empeche de faire une requete impossible tels qu une commande alors que le stock est epuisé
+ */
