@@ -56,7 +56,8 @@ Create table CodePromo
   used      varchar2(1) NOT NULL,
   idClient  NUMBER,
   constraint fk_CodePromo Foreign key (idClient) references Client (idClient) on delete cascade,
-  constraint codeProm_c1 check ( used in ('1', '0'))
+  constraint codeProm_c1 check ( used in ('1', '0')),
+  constraint codeProm_c2 check ( reduction > 0 )
 );
 
 
@@ -66,7 +67,7 @@ Create table Commande
   idCommande    NUMBER primary key,
   idClient      NUMBER,
   datePaiemant  date          NOT NULL,
-  montant       NUMBER       NOT NULL,
+  montant       float       NOT NULL,
   historise     NUMBER(1)    NOT NULL,
   renduPdf      varchar2(250) NOT NULL,
   statut        varchar2(250) NOT NULL,
@@ -74,6 +75,7 @@ Create table Commande
   constraint commande_c1 check (statut in ('EnCoursPreparation', 'EnCoursLivraison', 'Livre', 'Annule')),
   constraint commande_c2 check (modeLivraison in ('PointRelais', 'Domicile')),
   constraint commande_c3 check (historise in ('1', '0')),
+  constraint commande_c4 check (montant >= 0),
   constraint fk_commande Foreign key (idClient) references Client (idClient) on delete set null
 );
 
@@ -105,7 +107,7 @@ Create table Impression
   idImpression NUMBER primary key,
   idClient     NUMBER,
   nom          varchar2(250) NOT NULL,
-  typeIm varchar2(10) not null,
+  typeIm       varchar2(10) not null,
   constraint fk_impression Foreign key (idClient) references Client (idClient) on delete cascade,
   constraint impression check (typeIm in ('cadre','agenda','calendrier','album','tirage'))
 );
@@ -118,7 +120,8 @@ create TABLE Commande_Impression
   quantite     NUMBER not null,
   constraint pk_CommandeImpression primary key (idCommande, idImpression),
   constraint fk_CommandeImpression1 foreign key (idCommande) references Commande (idCommande) on delete set null,
-  constraint fk_CommandeImpression2 foreign key (idImpression) references Impression (idImpression) on delete set null
+  constraint fk_CommandeImpression2 foreign key (idImpression) references Impression (idImpression) on delete set null,
+  constraint CommandeImpression check (quantite > 0 )
 );
 
 Create table Photo_Impression
@@ -137,9 +140,10 @@ Create table Photo_Tirage_Impression
   idPhoto      NUMBER,
   idImpression NUMBER,
   quantite     NUMBER NOT NULL,
+  constraint Photo_Tirage_Impression check (quantite > 0 ),
   constraint pk_PhotoTirageImpression primary key (idPhoto, idImpression),
   constraint fk_PhotoTirageImpression
-    Foreign key (idPhoto, idImpression) references Photo_Impression (idPhoto, idImpression)
+  Foreign key (idPhoto, idImpression) references Photo_Impression (idPhoto, idImpression)
 );
 
 
@@ -149,7 +153,9 @@ Create table Inventaire
   nomCommercial   varchar2(250) NOT NULL,
   caracteristique varchar2(250),
   stock           NUMBER       NOT NULL,
-  prix            NUMBER       NOT NULL
+  prix            NUMBER       NOT NULL,
+  constraint inventaire_i1 check (stock >= 0),
+  constraint inventaire_i2 check (prix > 0)
 );
 
 
