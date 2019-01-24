@@ -9,6 +9,7 @@ Begin
 end;
 /
 
+-- Procedure qui supprime les images non utilisées (10 jours) --
 
 create or replace procedure deleteNoUsedImages IS
 begin
@@ -55,18 +56,18 @@ begin
   where chemin = CHEMIN;
 end;
 /
-commit;
+
 
 -- Trigger Une commande n'est possible que si le support d'impression est en stock
 
 create or replace trigger commandePossible
-  before insert or update of IDCOMMANDE,STATUT on COMMANDE
+  before insert or update on COMMANDE_IMPRESSION
   for each row
   declare
-    nb number;
+    nb number(4);
   begin
     select count(*) into nb
-    from COMMANDE_IMPRESSION ci join (select IDIMPRESSION,IDPRODUIT from CADRE
+    from (select IDIMPRESSION,IDPRODUIT from CADRE
                                       union
                                       select IDIMPRESSION,IDPRODUIT from AGENDA
                                       union
@@ -75,8 +76,7 @@ create or replace trigger commandePossible
                                       select IDIMPRESSION,IDPRODUIT from ALBUM
                                       union
                                       select IDIMPRESSION,IDPRODUIT from TIRAGE) Imp
-      on ci.IDIMPRESSION = Imp.IDIMPRESSION
-                                join (select * from CADREPRODUIT
+        join (select * from CADREPRODUIT
                                       union
                                       select * from AGENDAPRODUIT
                                       union
@@ -85,44 +85,60 @@ create or replace trigger commandePossible
                                       select * from ALBUMPRODUIT
                                       union
                                       select * from TIRAGEPRODUIT) Inv
-      on imp.IDPRODUIT = Inv. IDPRODUIT join INVENTAIRE i on inv.IDPRODUIT = i.IDPRODUIT
-    where i.STOCK >= ci.QUANTITE and ci.IDCOMMANDE = :new.IDCOMMANDE and :new.STATUT = 'EnCoursLivraison';
+      on imp.IDPRODUIT = Inv.IDPRODUIT join INVENTAIRE i on inv.IDPRODUIT = i.IDPRODUIT
+    where i.STOCK < :new.QUANTITE and :new.IDIMPRESSION = imp.IDIMPRESSION  ;
     if nb <> 0 then raise_application_error(-20100,'Produit non disponible');end if;
   end;
 /
 
 
--- First Insert into commande table the status must be "EnCoursPreparation" --
+-- Trigger Mailing simulation --
 
-create or replace trigger insertIntoCommande
-  after insert on COMMANDE
+create or replace trigger mailSending
+  after delete or update of idclient, CHEMIN, PARTAGER on IMAGE
   for each row
-  begin
-    if (:NEW.STATUT <> 'EnCoursPreparation')
-      then raise_application_error(-20100,'le statut de l insertion d une commande a la première fois doit etre: EnCoursPreparation');
-    end if ;
-  end;
-/
--- Trigger R9 & R10 --
-
-
--- Update Montant for the Commande (C) whenever we add impression (X) to (C)
-
-create or replace trigger updateCommadePrice
-  after insert or update on COMMANDE_IMPRESSION
   declare
-    prixTotalArticl : number;
-  begin
+     cursor clients is select c.NOM, c.MAIL, p.CHEMIN
+     from  photo p
+      join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
+      join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
+      join CLIENT c on im.IDCLIENT = c.IDCLIENT
+     where :new.CHEMIN = p.CHEMIN and c.IDCLIENT <> :new.IDCLIENT  and :new.PARTAGER = 0;
 
+    client clients%ROWTYPE;
+
+    begin
+    open clients;
+    fetch clients into client;
+    while (clients%found) LOOP
+      DBMS_output.put_line('sending mail to ' ||client.NOM ||' at ' || client.MAIL || ' because of this image, it is deleted or updated: ' || client.CHEMIN);
+      fetch clients into client;
+    end loop;
+    close clients;
+  end;
+/
+
+-- Une commande est possible sur des impressions dont les photos utilisées --
+-- apartients au client qui a effectué la cmd, ou partagées par un autre client --
+
+
+create or replace trigger commandePossible1
+  before insert or update on COMMANDE_IMPRESSION
+  for each row
+  declare
+    nb number(4);
+  begin
+    select Count(*) into nb
+    from PHOTO_IMPRESSION pi
+      where pi.IDPHOTO not in ( select cui.IDPHOTO
+                                  FROM CLIENT_USE_IMAGE cui join commande c on cui.IDCLIENT = c.IDCLIENT
+                                  where :new.IDCOMMANDE = c.IDCOMMANDE
+                                  and :new.IDIMPRESSION = cui.IDIMPRESSION);
+    if (nb <> 0 )
+      then raise_application_error(-20100,' image non paratgée');
+    end if;
   end;
 /
 
 
-
-select c.NOM, p.CHEMIN
-  from image i join photo p on i.CHEMIN = p.CHEMIN
-  join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
-  join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
-  join CLIENT c on im.IDCLIENT = c.IDCLIENT
-where c.IDCLIENT <> i.IDCLIENT and i.PARTAGER = 1;
-
+commit;

@@ -1,3 +1,4 @@
+drop view Client_Use_Image;
 drop table AdminCommande;
 drop table AdminClient;
 drop table AdminImage;
@@ -104,7 +105,9 @@ Create table Impression
   idImpression NUMBER primary key,
   idClient     NUMBER,
   nom          varchar2(250) NOT NULL,
-  constraint fk_impression Foreign key (idClient) references Client (idClient) on delete cascade
+  typeIm varchar2(10) not null,
+  constraint fk_impression Foreign key (idClient) references Client (idClient) on delete cascade,
+  constraint impression check (typeIm in ('cadre','agenda','calendrier','album','tirage'))
 );
 
 
@@ -296,5 +299,20 @@ Create table AdminCommande
   constraint fk_AdminCommande1 Foreign key (idAdmin) references Admin (idAdmin) on delete set null,
   constraint fk_AdminCommande2 Foreign key (idCommande) references Commande (idCommande) on delete set null
 );
+
+create view Client_Use_Image as
+select c.IDCLIENT, p.CHEMIN, p.IDPHOTO, pi.IDIMPRESSION
+  from image i join photo p on i.CHEMIN = p.CHEMIN
+  join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
+  join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
+  join CLIENT c on im.IDCLIENT = c.IDCLIENT
+where c.IDCLIENT <> i.IDCLIENT and i.PARTAGER = 1
+union
+select I.IDCLIENT,P.CHEMIN,p.idPhoto, pi.IDIMPRESSION
+  from CLIENT c join IMAGE i on c.IDCLIENT = i.IDCLIENT
+  join PHOTO p on I.chemin = P.chemin
+  join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
+  join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
+                        and im.IDCLIENT = c.IDCLIENT;
 
 commit ;
