@@ -48,5 +48,6 @@ public class CodePromo {
 	public void setUsed(boolean used) {
 		this.used = used;
 	}
+	
 
 }
