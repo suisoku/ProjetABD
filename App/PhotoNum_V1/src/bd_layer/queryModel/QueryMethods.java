@@ -27,12 +27,12 @@ import dataInterfaces.TypeImpression;
  * @author Nord_38
  *
  */
-public class ClientQuery {
+public class QueryMethods {
 	
 	
 	private  Connection con;
 	
-	public  ClientQuery() {
+	public  QueryMethods() {
 		 con = ConnectionBD.getConnection();
 	}
 	
