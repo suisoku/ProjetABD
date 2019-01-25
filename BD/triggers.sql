@@ -140,5 +140,20 @@ create or replace trigger commandePossible1
   end;
 /
 
+-- Un client ne peut utiliser un fichier partagé par une autre personne --
+-- que si lui-même partage au moins un fichier --
+/*create or replace trigger imageUsed
+  before insert or update on PHOTO_IMPRESSION
+  for each row
+  declare
+    nb number(4);
+  begin
+    select count(*) into nb
+    from CLIENT c  join impage i on  c.IDCLIENT = i.IDCLIENT
 
+    join
+
+  end;
+/*/
 commit;
+
