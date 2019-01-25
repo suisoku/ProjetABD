@@ -9,11 +9,13 @@ public class HowToUse {
 	/** Credentials are editable from BD.properties file **/
 	public static void main(String[] args) throws SQLException {
 		
+		//class ResultQ extends ArrayList<ArrayList<Object>>{}
+		
 		// To get a connection instance :
 		Connection con = ConnectionBD.getConnection();
 		
 		// getData returns a 2D object list of all elements of a given query
-		ArrayList<ArrayList<Object>> wow = ConnectionBD.getData(con, "select * from client2");
+		ResQ wow = ConnectionBD.getData(con, "select * from client");
 		System.out.println("size " + wow.size());
 		
 		// Example of iteration
@@ -23,5 +25,6 @@ public class HowToUse {
 			}
 			System.out.println();
 		}
+	
 	}
 }

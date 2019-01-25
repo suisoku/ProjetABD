@@ -47,7 +47,7 @@ Create table Adresse
   CONSTRAINT fk_Adresse Foreign key (idClient) references Client (idClient) on delete cascade
 );
 
---<!-- Mettre une date et la mettre en clÃ© primaire--!>
+--<!-- Mettre une date et la mettre en clé primaire--!>
 Create table CodePromo
 (
   idCode    number(10) primary key,

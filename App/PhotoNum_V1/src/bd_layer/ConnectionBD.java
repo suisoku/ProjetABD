@@ -38,8 +38,8 @@ public class ConnectionBD {
         }
     }
         
-    public static ArrayList<ArrayList<Object>> getData(Connection con , String query) throws SQLException {
-		ArrayList<ArrayList<Object>> array = new ArrayList<ArrayList<Object>>();
+    public static ResQ getData(Connection con , String query) throws SQLException {
+		ResQ array = new ResQ();
 		ArrayList<Object> row =  null;
 		
         Statement stmt = con.createStatement();
