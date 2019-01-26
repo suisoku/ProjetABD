@@ -10,7 +10,6 @@ public class TestQuery1 {
 	public static void main(String[] args) throws SQLException {
 		QueryMethods cq = new QueryMethods();
 		
-
 		
 		System.out.println("--------TEST CLIENT------------");
 			Client c = cq.getClient(4);

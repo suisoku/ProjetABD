@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import bd_layer.ConnectionBD;
 import bd_layer.ResQ;
+import bd_layer.Tuple;
 import dataInterfaces.Adresse;
 import dataInterfaces.Client;
 import dataInterfaces.CodePromo;
@@ -215,10 +216,31 @@ public class QueryMethods {
 		return codeList;
 	}
 
-	/** Je veux affiche le tarif du produit  **/
-	
+	/** Je veux affiche le tarif du produit NOT_DONE  **/
 	public ResQ getProductPrice(){
 		return null;
+	}
+
+	
+	public void addClient(Client client) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+		
+		values.add(client.getIdClient()+"");
+		values.add(client.getMail());
+		values.add(client.getNom());
+		values.add(client.getPrenom());
+		values.add(client.getMdp());
+		values.add(client.getTelephone());
+		
+		ConnectionBD.addData(con, "client", values);
+	}
+	
+	public void deleteClient(int idClient) throws SQLException {
+		ArrayList<Tuple> cond = new ArrayList<Tuple>();
+		
+		cond.add(new Tuple("idclient", idClient+""));
+		
+		ConnectionBD.deleteData(con, "client", cond);
 	}
 	
 	
