@@ -51,7 +51,13 @@ public class TestQuery2 {
 		System.out.println("------------------------------");
 		
 		System.out.println("--------DELETE commande-----------");
-		cq.deleteCommande(10);
+		//cq.deleteCommande(10);
+		System.out.println("------------------------------");
+		
+		System.out.println("--------GET product----------");
+		ProduitInventaire ppi = cq.getProduitInventaire(4);
+		System.out.println(ppi.getIdProduit() +" | " + ppi.getCaracteristique() +" | " + ppi.getNomCommercial() 
+		+" | " + ppi.getPrix() +" | " + ppi.getStock());
 		System.out.println("------------------------------");
 	}
 }
