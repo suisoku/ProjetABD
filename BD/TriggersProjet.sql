@@ -15,7 +15,7 @@ declare
   nbCodeSupprimer int;
 begin
 
-  select count(*) into nbCodeSupprimer
+  select nvl(count(*),0) into nbCodeSupprimer
   from CodePromo
   where used ='1';
 
@@ -42,21 +42,38 @@ end;
 /
 
 
+
 -- Un client ne peut utiliser un fichier partagé par une autre personne
 -- que si lui-même partage au moins un fichier. (ATTENTIOOOOON)
 create or replace trigger trigger_ImageUsed
-after insert on Client_Use_Image
+after insert on Photo_impression
 for each row
 declare
-  nbImagePartager int;
+  proprioImage int;
+  idC int;
+  nbImagesPartager int;
 begin
 
-  select count(*) into nbImagePartager
-  from Image
-  where idClient=:new.idClient and partager='1';
+  select nvl(idClient,-1) into idC
+  from impression
+  where idImpression = :new.idImpression;
 
-  if nbImagePartager<1 then
-    raise_application_error(-20101,'Il faut partager une image au préalable avant de d utiliser une image partager');
+  if idC = -1 then
+    raise_application_error(-20100,'Il faut creer l impression avant de lui associer une image');
+  end if;
+
+  select nvl(count(distinct i.chemin),0) into proprioImage
+  from Image i join Photo p on i.chemin=p.chemin
+  where i.idClient=idC and p.idPhoto = :new.idPhoto;
+
+  if proprioImage = 0 then
+    select nvl(count(*),0) into nbImagesPartager
+    from image
+    where idClient=idC and partager='1';
+
+    if nbImagesPartager < 1 then
+      raise_application_error(-20101,'Il faut partager une image avant de pouvoir utiliser une image externe');
+    end if;
   end if;
 
 end;
