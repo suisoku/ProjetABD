@@ -1,3 +1,4 @@
+drop view Client_Use_Image;
 drop table AdminCommande;
 drop table AdminClient;
 drop table AdminImage;
@@ -47,15 +48,16 @@ Create table Adresse
   CONSTRAINT fk_Adresse Foreign key (idClient) references Client (idClient) on delete cascade
 );
 
---<!-- Mettre une date et la mettre en clÈ primaire--!>
-Create table CodePromo
+ Create table CodePromo
 (
   idCode    number(10) primary key,
+  code      varchar2(250) NOT NULL,
   reduction float       NOT NULL,
   used      varchar2(1) NOT NULL,
   idClient  NUMBER,
   constraint fk_CodePromo Foreign key (idClient) references Client (idClient) on delete cascade,
-  constraint codeProm_c1 check ( used in ('1', '0'))
+  constraint codeProm_c1 check ( used in ('1', '0')),
+  constraint codeProm_c2 check (reduction between 0.01 and 0.99)
 );
 
 
@@ -65,7 +67,7 @@ Create table Commande
   idCommande    NUMBER primary key,
   idClient      NUMBER,
   datePaiemant  date          NOT NULL,
-  montant       NUMBER       NOT NULL,
+  montant       float       NOT NULL,
   historise     NUMBER(1)    NOT NULL,
   renduPdf      varchar2(250) NOT NULL,
   statut        varchar2(250) NOT NULL,
@@ -73,6 +75,7 @@ Create table Commande
   constraint commande_c1 check (statut in ('EnCoursPreparation', 'EnCoursLivraison', 'Livre', 'Annule')),
   constraint commande_c2 check (modeLivraison in ('PointRelais', 'Domicile')),
   constraint commande_c3 check (historise in ('1', '0')),
+  constraint commande_c4 check (montant >= 0),
   constraint fk_commande Foreign key (idClient) references Client (idClient) on delete set null
 );
 
@@ -104,7 +107,9 @@ Create table Impression
   idImpression NUMBER primary key,
   idClient     NUMBER,
   nom          varchar2(250) NOT NULL,
-  constraint fk_impression Foreign key (idClient) references Client (idClient) on delete cascade
+  typeIm       varchar2(10) not null,
+  constraint fk_impression Foreign key (idClient) references Client (idClient) on delete cascade,
+  constraint impression check (typeIm in ('cadre','agenda','calendrier','album','tirage'))
 );
 
 
@@ -114,8 +119,9 @@ create TABLE Commande_Impression
   idImpression NUMBER,
   quantite     NUMBER not null,
   constraint pk_CommandeImpression primary key (idCommande, idImpression),
-  constraint fk_CommandeImpression1 foreign key (idCommande) references Commande (idCommande) on delete set null,
-  constraint fk_CommandeImpression2 foreign key (idImpression) references Impression (idImpression) on delete set null
+  constraint fk_CommandeImpression1 foreign key (idCommande) references Commande (idCommande),
+  constraint fk_CommandeImpression2 foreign key (idImpression) references Impression (idImpression) on delete set null,
+  constraint CommandeImpression check (quantite > 0 )
 );
 
 Create table Photo_Impression
@@ -134,9 +140,10 @@ Create table Photo_Tirage_Impression
   idPhoto      NUMBER,
   idImpression NUMBER,
   quantite     NUMBER NOT NULL,
+  constraint Photo_Tirage_Impression check (quantite > 0 ),
   constraint pk_PhotoTirageImpression primary key (idPhoto, idImpression),
   constraint fk_PhotoTirageImpression
-    Foreign key (idPhoto, idImpression) references Photo_Impression (idPhoto, idImpression)
+  Foreign key (idPhoto, idImpression) references Photo_Impression (idPhoto, idImpression)
 );
 
 
@@ -146,7 +153,9 @@ Create table Inventaire
   nomCommercial   varchar2(250) NOT NULL,
   caracteristique varchar2(250),
   stock           NUMBER       NOT NULL,
-  prix            NUMBER       NOT NULL
+  prix            NUMBER       NOT NULL,
+  constraint inventaire_i1 check (stock >= 0),
+  constraint inventaire_i2 check (prix > 0)
 );
 
 
@@ -248,8 +257,7 @@ Create table Admin
 (
   idAdmin NUMBER primary key,
   mail    varchar2(250) NOT NULL,
-  nom     varchar2(250) NOT NULL,
-  prenom  varchar2(250) NOT NULL,
+  nom     varchar2(250) NOT NULL unique,
   mdp     varchar2(250) NOT NULL
 );
 
@@ -265,7 +273,6 @@ Create table AdminClient
 );
 
 
--- erreur sur le rendu, il y a idImage au lieu de chemin
 Create table AdminImage
 (
   idAdmin   NUMBER,
@@ -296,5 +303,21 @@ Create table AdminCommande
   constraint fk_AdminCommande1 Foreign key (idAdmin) references Admin (idAdmin) on delete set null,
   constraint fk_AdminCommande2 Foreign key (idCommande) references Commande (idCommande) on delete set null
 );
+
+-- Une vue qui affiche les images et les photos utilis√©es par un client dans une impression --
+create view Client_Use_Image as
+select c.IDCLIENT, p.CHEMIN, p.IDPHOTO, pi.IDIMPRESSION
+  from image i join photo p on i.CHEMIN = p.CHEMIN
+  join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
+  join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
+  join CLIENT c on im.IDCLIENT = c.IDCLIENT
+where c.IDCLIENT <> i.IDCLIENT and i.PARTAGER = 1
+union
+select I.IDCLIENT,P.CHEMIN,p.idPhoto, pi.IDIMPRESSION
+  from CLIENT c join IMAGE i on c.IDCLIENT = i.IDCLIENT
+  join PHOTO p on I.chemin = P.chemin
+  join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
+  join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
+                        and im.IDCLIENT = c.IDCLIENT;
 
 commit ;

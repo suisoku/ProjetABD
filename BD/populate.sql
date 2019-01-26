@@ -1,31 +1,3 @@
-truncate table AdminCommande;
-truncate table AdminClient;
-truncate table AdminImage;
-truncate table AdminInventaire;
-truncate table Admin;
-truncate table Tirage;
-truncate table Cadre;
-truncate table Calendrier;
-truncate table Agenda;
-truncate table Album;
-truncate table TirageProduit;
-truncate table CadreProduit;
-truncate table CalendrierProduit;
-truncate table AgendaProduit;
-truncate table AlbumProduit;
-truncate table Inventaire;
-truncate table Photo_Tirage_Impression;
-truncate table Photo_Impression;
-truncate table Photo;
-truncate table Commande_Impression;
-truncate table Impression;
-truncate table Image;
-truncate table Commande;
-truncate table CodePromo;
-truncate table Adresse;
-truncate table Client;
-
-
 -- Insertion Clients --
 
 insert into Client values (1,'cbzakaria95','CHOUKCHOU BRAHAM','Zakaria','lol123',0784917799);
@@ -73,7 +45,7 @@ insert into Image values ('/usr/tmp/5.jpg', 5, '2K', 1, '15-JAN-19');
 -- Insertion Photo --
 
 insert into Photo values (1,'/usr/tmp/1.jpg','sexy bitch','retouche1');
-insert into Photo values (2,'/usr/tmp/2.jpg','ooow yeah','retouche2');
+insert into Photo values (2,'/usr/tmp/3.jpg','ooow yeah','retouche2');
 insert into Photo values (3,'/usr/tmp/3.jpg','nice Nigga','retouche3');
 insert into Photo values (4,'/usr/tmp/4.jpg','stylé','retouche4');
 insert into Photo values (5,'/usr/tmp/5.jpg','dark chocolat','retouche5');
@@ -81,7 +53,7 @@ insert into Photo values (5,'/usr/tmp/5.jpg','dark chocolat','retouche5');
 -- Insertion Impression --
 
 insert into Impression values (1,1,'zakImpression');
-insert into Impression values (2,1,'zakImpression');
+insert into Impression values (2,2,'nourImpression');
 insert into Impression values (3,3,'ivImpression');
 insert into Impression values (4,4,'regisImpression');
 insert into Impression values (5,5,'sidsonImpression');
@@ -96,9 +68,9 @@ insert into Commande_Impression values (5,5,50);
 
 -- Insertion Photo_Impression --
 
-insert into PHOTO_IMPRESSION values (1,1, 'page 1');
-insert into PHOTO_IMPRESSION values (2,1, 'page 2');
-insert into PHOTO_IMPRESSION values (3,3, 'page 3');
+insert into PHOTO_IMPRESSION values (3,1, 'page 1');
+insert into PHOTO_IMPRESSION values (2,2, 'page 2');
+insert into PHOTO_IMPRESSION values (3,2, 'page 3');
 insert into PHOTO_IMPRESSION values (4,4, 'page 4');
 insert into PHOTO_IMPRESSION values (5,5, 'page 5');
 
@@ -283,3 +255,11 @@ select *
                                       union
                                       select IDIMPRESSION,IDPRODUIT from TIRAGE) Imp
       on ci.IDIMPRESSION = Imp.IDIMPRESSION
+
+
+select c.NOM, p.CHEMIN
+  from image i join photo p on i.CHEMIN = p.CHEMIN
+  join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
+  join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
+  join CLIENT c on im.IDCLIENT = c.IDCLIENT
+where c.IDCLIENT <> i.IDCLIENT and i.PARTAGER = 1;
