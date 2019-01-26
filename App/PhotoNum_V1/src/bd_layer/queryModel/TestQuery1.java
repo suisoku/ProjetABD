@@ -10,7 +10,6 @@ public class TestQuery1 {
 	public static void main(String[] args) throws SQLException {
 		QueryMethods cq = new QueryMethods();
 		
-
 		
 		System.out.println("--------TEST CLIENT------------");
 			Client c = cq.getClient(4);
@@ -43,7 +42,7 @@ public class TestQuery1 {
 		  System.out.println(i.getIdImpression() +" | "+ i.getIdClient() +" | "+ i.getNom() +" | ");
 		  System.out.println(i.getTypeImpression().type);
 		  
-		  for(Object elem   : i.getTypeImpression().attributes.values()) {
+		  for(Object elem   : i.getTypeImpression().attributes.entrySet()) {
 			  System.out.println(elem.toString());
 		  }
 		  for(PhotoImpression pi : i.getPhotoImpression()) {

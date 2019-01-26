@@ -4,12 +4,16 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import bd_layer.ConnectionBD;
 import bd_layer.ResQ;
+import bd_layer.Tuple;
 import dataInterfaces.Adresse;
 import dataInterfaces.Client;
 import dataInterfaces.CodePromo;
@@ -133,7 +137,7 @@ public class QueryMethods {
       
         while (rs.next()) {
         	attr = new HashMap<String , Object>();
-        	for(int i = 2 ; i < cols ; i++) {
+        	for(int i = 1 ; i < cols ; i++) {
         		attr.put(rs.getMetaData().getColumnName(i+1), rs.getObject(i+1));
         	}
         	
@@ -200,7 +204,7 @@ public class QueryMethods {
 	
 
 	public Image getImage(String chemin) throws SQLException {
-		ResQ array = ConnectionBD.getData(con, "select * from image where chemin="+chemin+"");
+		ResQ array = ConnectionBD.getData(con, "select * from image where chemin='"+chemin+"'");
 		Image codeList = null ;
 		
 		for(ArrayList<Object> row : array) {
@@ -215,12 +219,190 @@ public class QueryMethods {
 		return codeList;
 	}
 
-	/** Je veux affiche le tarif du produit  **/
-	
+	/** Je veux affiche le tarif du produit NOT_DONE  **/
 	public ResQ getProductPrice(){
 		return null;
 	}
+
 	
+	public void addClient(Client client) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+		
+		values.add(client.getIdClient()+"");
+		values.add(client.getMail());
+		values.add(client.getNom());
+		values.add(client.getPrenom());
+		values.add(client.getMdp());
+		values.add(client.getTelephone());
+		
+		ConnectionBD.addData(con, "client", values);
+	}
+	
+	
+	public void deleteClient(int idClient) throws SQLException {
+		ArrayList<Tuple> cond = new ArrayList<Tuple>();
+		
+		cond.add(new Tuple("idclient", idClient+""));
+		
+		ConnectionBD.deleteData(con, "client", cond);
+	}
+	
+	public void addImage(Image image) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+		
+		values.add(image.getChemin());
+		values.add(image.getIdClient() + "");
+		values.add(image.getResolution());
+		values.add(image.isPartager() ? "1" : "0");
+		
+		String dateS = new SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
+		
+		//System.out.println(dateS);
+		values.add(dateS);
+		
+		ConnectionBD.addData(con, "image", values);
+	}
+	
+	public void deleteImage(String chemin) throws SQLException {
+		ArrayList<Tuple> cond = new ArrayList<Tuple>();
+		
+		cond.add(new Tuple("chemin", chemin+""));
+		
+		ConnectionBD.deleteData(con, "image", cond);
+	}
+	
+	public void addPhoto(Photo photo) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+		
+		values.add(photo.getIdPhoto()+ "");
+		values.add(photo.getChemin() );
+		values.add(photo.getCommentaire());
+		values.add(photo.getTypeRetouche());
+		
+		//String dateS = new SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
+		ConnectionBD.addData(con, "photo", values);
+	}
+	
+	public void addImpression(Impression impression) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+		TypeImpression ti = impression.getTypeImpression();
+		
+		values.add(impression.getIdImpression() + "");
+		values.add(impression.getIdClient() + "");
+		values.add(impression.getNom());
+		values.add(ti.type.name());
+		
+		//String dateS = new SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
+		//ConnectionBD.addData(con, "impression", values);
+        Statement stmt = con.createStatement();
+        String colPool = " (IDIMPRESSION ,";
+        String valPool = " ('"+impression.getIdImpression()+ "' ,";
+        for(Entry<String, Object> e : ti.attributes.entrySet()) {
+        	colPool+= ""+e.getKey() +" ,";
+        	valPool+="'"+e.getValue() +"' ,";
+        }
+        colPool = colPool.substring(0, colPool.length() - 1) + ")";
+        valPool = valPool.substring(0, valPool.length() - 1) + ")";
+        String query = "INSERT INTO " + ti.type.name() + colPool +" VALUES" + valPool;
+        stmt.executeUpdate(query);
+        // Close the result set, statement and the connection
+
+        stmt.close();		
+	}
+	
+	public void addPhotoImpression(PhotoImpression pi) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+		
+		values.add(pi.photo.getIdPhoto() + "");
+		values.add(pi.idImpression + "");
+		values.add(pi.specPart);
+	
+		//String dateS = new SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
+		ConnectionBD.addData(con, "photo_impression", values);
+	}
+	
+	public void addCommandeImpression(int idCommande , CommandeImpression ci) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+		
+		values.add(idCommande + "");
+		values.add(ci.impression.getIdImpression() + "");
+		values.add(ci.quantite + "");
+		
+	
+		//String dateS = new SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
+		ConnectionBD.addData(con, "commande_impression", values);
+	}
+	
+	public void addCommande(Commande c) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+		
+		values.add(c.getIdCmd() + "");
+		values.add(c.getIdClient() + "");
+		String dateS = new SimpleDateFormat("dd-MMM-yy").format(c.getDatePaiement());
+		values.add(dateS);
+		values.add(c.getMontant() + "");
+		values.add(c.isHistorise() ? "1" : "0");
+		values.add(c.getRenduPdf());
+		values.add(c.getStatut());
+		values.add(c.getModeLivraison());
+		
+		ConnectionBD.addData(con, "commande", values);
+	}
+	
+	public void addAdresse(Adresse s) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+		
+		values.add(s.getIdClient()+"");
+		values.add(s.getNomAdresse());
+		values.add(s.getAdresse());
+		
+		ConnectionBD.addData(con, "adresse", values);
+	}
+	
+	public void addCodePromo(CodePromo cp) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+		
+		values.add(cp.getCode()+"");
+		values.add(cp.getReduction()+"");
+		values.add(cp.isUsed() ? "1" : "0" );
+		values.add(cp.getIdClient()+"");
+		
+		ConnectionBD.addData(con, "codepromo", values);
+	}
+	
+	
+	public void deleteImpression(int idImpression , String type) throws SQLException {
+		ArrayList<Tuple> cond = new ArrayList<Tuple>();
+		
+		cond.add(new Tuple("idImpression", idImpression+""));
+		
+		ConnectionBD.deleteData(con, type, cond);
+		ConnectionBD.deleteData(con, "impression", cond);
+	}
+	
+	public void deletePhotoImpression(PhotoImpression p) throws SQLException {
+		ArrayList<Tuple> cond = new ArrayList<Tuple>();
+		
+		cond.add(new Tuple("idImpression", p.idImpression+""));
+		cond.add(new Tuple("idPhoto", p.photo.getIdPhoto()+""));
+		
+		ConnectionBD.deleteData(con, "photo_impression", cond);
+	}
+	
+	public void deleteCommandeImpression(int idCommande , CommandeImpression c) throws SQLException {
+		ArrayList<Tuple> cond = new ArrayList<Tuple>();
+		
+		cond.add(new Tuple("idCommande", idCommande+""));
+		cond.add(new Tuple("idImpression", c.impression.getIdImpression()+""));
+		
+		ConnectionBD.deleteData(con, "commande_impression", cond);
+	}
+	
+	public void deleteCommande(int idCommande) throws SQLException {
+		ArrayList<Tuple> cond = new ArrayList<Tuple>();
+		cond.add(new Tuple("idCommande", idCommande+""));
+		ConnectionBD.deleteData(con, "commande", cond);
+	}
 	
 	
 }
