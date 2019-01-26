@@ -41,7 +41,7 @@ public class TestQuery1 {
 		System.out.println("--------TEST Impression photos ------------");
 		  Impression i = cq.getClientImpression(4).get(0);
 		  System.out.println(i.getIdImpression() +" | "+ i.getIdClient() +" | "+ i.getNom() +" | ");
-		  System.out.println(i.getTypeImpression().type.name()  );
+		  System.out.println(i.getTypeImpression().type);
 		  
 		  for(Object elem   : i.getTypeImpression().attributes.values()) {
 			  System.out.println(elem.toString());

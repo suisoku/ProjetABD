@@ -106,7 +106,7 @@ public class QueryMethods {
 	}
 	
 	public Impression getImpression(int idImpression) throws SQLException {
-		ResQ array = ConnectionBD.getData(con, "select * from photo where idimpression="+idImpression+"");
+		ResQ array = ConnectionBD.getData(con, "select * from impression where idimpression="+idImpression+"");
 		Impression codeList = null ;
 		
 		for(ArrayList<Object> row : array) {
@@ -116,6 +116,7 @@ public class QueryMethods {
 					row.get(2).toString(),
 					getPhotoImpression(idImpression)
 					);
+			//System.out.println(row.get(3).toString());
 			codeList.setTypeImpression(getTypeImpression(idImpression, row.get(3).toString()));
 		}
 		return codeList;
@@ -132,8 +133,8 @@ public class QueryMethods {
       
         while (rs.next()) {
         	attr = new HashMap<String , Object>();
-        	for(int i = 1 ; i <= cols ; i++) {
-        		attr.put(rs.getMetaData().getColumnName(i+1), rs.getObject(i));
+        	for(int i = 2 ; i < cols ; i++) {
+        		attr.put(rs.getMetaData().getColumnName(i+1), rs.getObject(i+1));
         	}
         	
         	ti  =  new TypeImpression(
@@ -155,8 +156,8 @@ public class QueryMethods {
 		for(ArrayList<Object> row : array) {
 			codeList.add(new PhotoImpression(
 							Integer.parseInt(row.get(1).toString()),
-							getPhoto(Integer.parseInt(row.get(2).toString())),
-							row.get(3).toString()
+							getPhoto(Integer.parseInt(row.get(0).toString())),
+							row.get(2).toString()
 			));
 		}
 		return codeList;
@@ -192,6 +193,7 @@ public class QueryMethods {
 					row.get(2).toString(),
 					getPhotoImpression(Integer.parseInt(row.get(0).toString()))
 				));
+			codeList.get(codeList.size()-1).setTypeImpression(getTypeImpression(Integer.parseInt(row.get(0).toString()), row.get(3).toString()));;
 		}
 		return codeList;
 	}
