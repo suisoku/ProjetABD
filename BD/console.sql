@@ -48,16 +48,16 @@ Create table Adresse
   CONSTRAINT fk_Adresse Foreign key (idClient) references Client (idClient) on delete cascade
 );
 
---<!-- Mettre une date et la mettre en clé primaire--!>
-Create table CodePromo
+ Create table CodePromo
 (
   idCode    number(10) primary key,
+  code      varchar2(250) NOT NULL,
   reduction float       NOT NULL,
   used      varchar2(1) NOT NULL,
   idClient  NUMBER,
   constraint fk_CodePromo Foreign key (idClient) references Client (idClient) on delete cascade,
   constraint codeProm_c1 check ( used in ('1', '0')),
-  constraint codeProm_c2 check ( reduction > 0 )
+  constraint codeProm_c2 check (reduction between 0.01 and 0.99)
 );
 
 
@@ -119,7 +119,7 @@ create TABLE Commande_Impression
   idImpression NUMBER,
   quantite     NUMBER not null,
   constraint pk_CommandeImpression primary key (idCommande, idImpression),
-  constraint fk_CommandeImpression1 foreign key (idCommande) references Commande (idCommande) on delete set null,
+  constraint fk_CommandeImpression1 foreign key (idCommande) references Commande (idCommande),
   constraint fk_CommandeImpression2 foreign key (idImpression) references Impression (idImpression) on delete set null,
   constraint CommandeImpression check (quantite > 0 )
 );
@@ -257,8 +257,7 @@ Create table Admin
 (
   idAdmin NUMBER primary key,
   mail    varchar2(250) NOT NULL,
-  nom     varchar2(250) NOT NULL,
-  prenom  varchar2(250) NOT NULL,
+  nom     varchar2(250) NOT NULL unique,
   mdp     varchar2(250) NOT NULL
 );
 
@@ -306,6 +305,7 @@ Create table AdminCommande
   constraint fk_AdminCommande2 Foreign key (idCommande) references Commande (idCommande) on delete set null
 );
 
+-- Une vue qui affiche les images et les photos utilisées par un client dans une impression --
 create view Client_Use_Image as
 select c.IDCLIENT, p.CHEMIN, p.IDPHOTO, pi.IDIMPRESSION
   from image i join photo p on i.CHEMIN = p.CHEMIN

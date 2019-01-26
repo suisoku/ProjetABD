@@ -129,11 +129,10 @@ create or replace trigger commandePossible1
     nb number(4);
   begin
     select Count(*) into nb
-    from PHOTO_IMPRESSION pi
-      where pi.IDPHOTO not in ( select cui.IDPHOTO
+    from PHOTO_IMPRESSION pi join CLIENT_USE_IMAGE cui1 on pi.IDIMPRESSION = cui1.IDIMPRESSION
+      where :new.IDIMPRESSION = cui1.IDIMPRESSION and pi.IDPHOTO not in ( select cui.IDPHOTO
                                   FROM CLIENT_USE_IMAGE cui join commande c on cui.IDCLIENT = c.IDCLIENT
-                                  where :new.IDCOMMANDE = c.IDCOMMANDE
-                                  and :new.IDIMPRESSION = cui.IDIMPRESSION);
+                                  and :new.IDCOMMANDE = c.IDCOMMANDE);
     if (nb <> 0 )
       then raise_application_error(-20100,' image non paratgée');
     end if;
