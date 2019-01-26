@@ -273,7 +273,6 @@ Create table AdminClient
 );
 
 
--- erreur sur le rendu, il y a idImage au lieu de chemin
 Create table AdminImage
 (
   idAdmin   NUMBER,
