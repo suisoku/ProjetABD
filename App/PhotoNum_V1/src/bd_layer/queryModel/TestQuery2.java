@@ -3,6 +3,7 @@ package bd_layer.queryModel;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import bd_layer.Tuple;
 import dataInterfaces.*;
 
 public class TestQuery2 {
@@ -55,9 +56,13 @@ public class TestQuery2 {
 		System.out.println("------------------------------");
 		
 		System.out.println("--------GET product----------");
-		ProduitInventaire ppi = cq.getProduitInventaire(4);
-		System.out.println(ppi.getIdProduit() +" | " + ppi.getCaracteristique() +" | " + ppi.getNomCommercial() 
-		+" | " + ppi.getPrix() +" | " + ppi.getStock());
+			ProduitInventaire ppi = cq.getProduitInventaire(4);
+			System.out.println(ppi.getIdProduit() +" | " + ppi.getCaracteristique() +" | " + ppi.getNomCommercial() 
+			+" | " + ppi.getPrix() +" | " + ppi.getStock());
+		System.out.println("------------------------------");
+		
+		System.out.println("--------Update Client----------");
+			cq.updateClient(3, new Tuple("MDP","bayern38") , new Tuple("TELEPHONE","1231238889"));
 		System.out.println("------------------------------");
 	}
 }

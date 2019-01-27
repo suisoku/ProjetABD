@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -440,5 +441,10 @@ public class QueryMethods {
 	/** UPDATE PART ----------------------------------------**/
 	
 	
-	
+	public void updateClient(int idClient ,Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idclient" , idClient + ""));
+		
+		ConnectionBD.updateData(con, "client", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
 }
