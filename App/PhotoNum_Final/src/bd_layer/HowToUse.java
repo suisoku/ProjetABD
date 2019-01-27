@@ -25,6 +25,6 @@ public class HowToUse {
 			}
 			System.out.println();
 		}
-	con.close();
+	
 	}
 }

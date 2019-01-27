@@ -61,6 +61,53 @@ public class ConnectionBD {
         
         return array;
     }
+    // The method should take as argument the table + the values to add in the right order no need of the types
+    public static void addData(Connection con, String table, ArrayList<String> values) throws SQLException {
+    	//generating the query
+    	
+    	String query = "INSERT INTO "+table+" VALUES(" ;
 
+    	for(String s : values) {
+    		query+= "'"+s+"',";
+    	}
+    	query = query.substring(0, query.length() - 1) + ")";
+        Statement stmt = con.createStatement();
+        stmt.executeUpdate(query);
+        
+        stmt.close();
+        
+    }
+    public static void updateData(Connection con, String table,ArrayList<Tuple> conditions,ArrayList<Tuple> values) throws SQLException {
+    	String query = "UPDATE "+table+" SET " ;
+    	String condition = " WHERE ";
+    	for(Tuple t : values) {
+    		query+= t.name + " = '"+t.value+"',";
+    	}
+    	for(Tuple b : conditions) {
+    		condition+= b.name + " = '"+b.value+"' AND ";
+    	}
+    	
+    	condition = condition.substring(0, condition.length() - 4);
+    	query = query.substring(0, query.length() - 1) + condition ;
+        Statement stmt = con.createStatement();
+        stmt.executeUpdate(query);
+        
+        stmt.close();
+    }
+    
+    //delete here 
+    
+    public static void deleteData(Connection con, String table,ArrayList<Tuple> conditions) throws SQLException {
+    	String condition = "DELETE FROM "+table+" WHERE " ;
 
+    	for(Tuple b : conditions) {
+    		condition+= b.name + " = '"+b.value+"' AND ";
+    	}
+    	
+    	condition = condition.substring(0, condition.length() - 4);
+        Statement stmt = con.createStatement();
+        stmt.executeUpdate(condition);
+        
+        stmt.close();
+    }
 }
