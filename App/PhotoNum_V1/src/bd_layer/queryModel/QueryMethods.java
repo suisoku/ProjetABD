@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import dataInterfaces.Image;
 import dataInterfaces.Impression;
 import dataInterfaces.Photo;
 import dataInterfaces.PhotoImpression;
+import dataInterfaces.ProduitInventaire;
 import dataInterfaces.TypeImpression;
 
 /** All Query Methods related to the client, 
@@ -41,6 +43,22 @@ public class QueryMethods {
 	}
 	
 
+	public ProduitInventaire getProduitInventaire(int idProduit) throws SQLException {
+		ResQ array = ConnectionBD.getData(con, "select * from inventaire where idproduit="+idProduit +"");
+		ProduitInventaire product= null;
+		
+		for(ArrayList<Object> row : array) {
+			product =  new ProduitInventaire(
+								Integer.parseInt(row.get(0).toString()), 
+								row.get(1).toString() , 
+								row.get(2).toString(),
+								Integer.parseInt(row.get(3).toString()),
+								Float.parseFloat(row.get(4).toString())
+								);
+		}
+		return product;
+	}
+	
 	
 	public Client getClient(int clientId) throws SQLException {
 		ResQ array = ConnectionBD.getData(con, "select * from client where idclient="+clientId +"");
@@ -239,6 +257,7 @@ public class QueryMethods {
 	}
 	
 	
+	
 	public void deleteClient(int idClient) throws SQLException {
 		ArrayList<Tuple> cond = new ArrayList<Tuple>();
 		
@@ -370,6 +389,8 @@ public class QueryMethods {
 		ConnectionBD.addData(con, "codepromo", values);
 	}
 	
+	/** DELETE STUFF -------------------------------- **/
+	
 	
 	public void deleteImpression(int idImpression , String type) throws SQLException {
 		ArrayList<Tuple> cond = new ArrayList<Tuple>();
@@ -404,5 +425,26 @@ public class QueryMethods {
 		ConnectionBD.deleteData(con, "commande", cond);
 	}
 	
+	public void deleteAdresse(Adresse a) throws SQLException {
+		ArrayList<Tuple> cond = new ArrayList<Tuple>();
+		cond.add(new Tuple("idclient", a.getIdClient()+""));
+		cond.add(new Tuple("nomadresse", a.getNomAdresse()+""));
+		ConnectionBD.deleteData(con, "adresse", cond);
+	}
 	
+	public void deleteCodePromo(CodePromo c) throws SQLException {
+		ArrayList<Tuple> cond = new ArrayList<Tuple>();
+		cond.add(new Tuple("idCode", c.getCode()+""));
+		ConnectionBD.deleteData(con, "codepromo", cond);
+	}
+	
+	/** UPDATE PART ----------------------------------------**/
+	
+	
+	public void updateClient(int idClient ,Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idclient" , idClient + ""));
+		
+		ConnectionBD.updateData(con, "client", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
 }
