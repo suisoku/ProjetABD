@@ -7,14 +7,17 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.TooManyListenersException;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import bd_layer.ConnectionBD;
 import bd_layer.ResQ;
 import bd_layer.Tuple;
+import dataInterfaces.Admin;
+import dataInterfaces.AdminHist;
 import dataInterfaces.Adresse;
 import dataInterfaces.Client;
 import dataInterfaces.CodePromo;
@@ -69,6 +72,59 @@ public class QueryMethods {
 						getClientAdresses(clientId),
 						getClientPromos(clientId));
 		}
+		return c;
+	}
+	
+	public Admin getAdmin(int idAdmin) throws SQLException {
+		ResQ array = ConnectionBD.getData(con, "select * from admin where idadmin="+idAdmin +"");
+		Admin c = null;
+		for(ArrayList<Object> row : array) {
+				c = new Admin(
+						Integer.parseInt(row.get(0).toString()), 
+						row.get(1).toString(), 
+						row.get(2).toString(), 
+						row.get(3).toString(), 
+						row.get(4).toString()); 
+		}
+		ResQ adCl = ConnectionBD.getData(con, "select * from admin_client where idadmin="+idAdmin+"");
+		
+		c.setAdmin_client(  (ArrayList<AdminHist>) (adCl.stream().map(s -> new AdminHist(
+							Integer.parseInt(s.get(0).toString()),
+			   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+							(Date)s.get(2))
+							).collect(Collectors.toList())
+				));
+		
+		ResQ adCl2 = ConnectionBD.getData(con, "select * from admin_commande where idadmin="+idAdmin+"");
+		
+		c.setAdmin_commande(  (ArrayList<AdminHist>) (adCl2.stream().map(s -> new AdminHist(
+				Integer.parseInt(s.get(0).toString()),
+   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+				(Date)s.get(2))
+				).collect(Collectors.toList())	
+		));
+		
+		ResQ adCl3 = ConnectionBD.getData(con, "select * from admin_inventaire where idadmin="+idAdmin+"");
+		
+		c.setAdmin_inventaire(  (ArrayList<AdminHist>) (adCl3.stream().map(s -> new AdminHist(
+				Integer.parseInt(s.get(0).toString()),
+   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+				(Date)s.get(2))
+				).collect(Collectors.toList())	
+		));
+		
+		ResQ adCl4 = ConnectionBD.getData(con, "select * from admin_image where idadmin="+idAdmin+"");
+		
+		c.setAdmin_image(  (ArrayList<AdminHist>) (adCl4.stream().map(s -> new AdminHist(
+				Integer.parseInt(s.get(0).toString()),
+   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+				(Date)s.get(2))
+				).collect(Collectors.toList())	
+		));
+
+
+		// 2Darraylist --map-> Stream<<AdminHist>> -Collector.toList-> cast ArrayList<AdminHist>->> ajout dans objet Admin 
+
 		return c;
 	}
 	
@@ -447,4 +503,32 @@ public class QueryMethods {
 		
 		ConnectionBD.updateData(con, "client", conds, new ArrayList<Tuple>(Arrays.asList(values)));
 	}
+	
+	public void updateInventaire(int idProduit ,Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idProduit" , idProduit + ""));
+		ConnectionBD.updateData(con, "inventaire", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	public void updateCommandeImpression(int idCommande , int idImpression ,Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idCommande" , idCommande + ""));
+		conds.add(new Tuple("idImpression" , idImpression + ""));
+		ConnectionBD.updateData(con, "commande_impression", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	public void updateImage(String chemin, Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("chemin" , chemin + ""));
+		ConnectionBD.updateData(con, "image", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	
+	// method that sorts date use ?
+	
+	//method that gets alla history 
+	
+	
+	
+	
 }
