@@ -36,12 +36,7 @@ import dataInterfaces.TypeImpression;
 public class QueryMethods {
 	
 	
-	private  Connection con;
-	
-	public  QueryMethods() {
-		 con = ConnectionBD.getConnection();
-	}
-	
+	private final static Connection con = ConnectionBD.getConnection();
 
 	public ProduitInventaire getProduitInventaire(int idProduit) throws SQLException {
 		ResQ array = ConnectionBD.getData(con, "select * from inventaire where idproduit="+idProduit +"");
