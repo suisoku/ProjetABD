@@ -34,15 +34,10 @@ import dataInterfaces.TypeImpression;
 public class QueryMethods {
 	
 	
-	private  Connection con;
-	
-	public  QueryMethods() {
-		 con = ConnectionBD.getConnection();
-	}
-	
-
+	private static final Connection con = ConnectionBD.getConnection();
 	
 	public Client getClient(int clientId) throws SQLException {
+		
 		ResQ array = ConnectionBD.getData(con, "select * from client where idclient="+clientId +"");
 		Client c = null;
 		for(ArrayList<Object> row : array) {
@@ -52,6 +47,7 @@ public class QueryMethods {
 						getClientPromos(clientId));
 		}
 		return c;
+		
 	}
 	
 	public ArrayList<Adresse> getClientAdresses(int clientId) throws SQLException {

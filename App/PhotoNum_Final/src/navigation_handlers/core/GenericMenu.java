@@ -7,22 +7,12 @@ public class GenericMenu {
 	private ArrayList<MenuItem> menuItems;
 	private Scanner scanner;
 
-	/**
-	 * Constructor initializes the class variables
-	 */
+
 	public GenericMenu() {
 		this.menuItems = new ArrayList<MenuItem>();
 		this.scanner = new Scanner(System.in);
 	}
 
-	/**
-	 * Adds a MenuItem with only a key and a name to the menuItems ArrayList
-	 * 
-	 * @param key
-	 *            the key the menu item will belong to
-	 * @param name
-	 *            the name of the menu item
-	 */
 	private void addMenuItem(String key, String name) {
 		MenuItem menuItem = new MenuItem(key, name);
 		menuItems.add(menuItem);
@@ -30,13 +20,6 @@ public class GenericMenu {
 
 	/**
 	 * Adds a MenuItem with key, name and runnable to the menuItems ArrayList
-	 * 
-	 * @param key
-	 *            the key the menu item will belong to
-	 * @param name
-	 *            the name of the menu item
-	 * @param runnable
-	 *            the method that will be run when the menu item is chosen
 	 */
 	public void addMenuItem(String key, String name, Runnable runnable) {
 		MenuItem menuItem = new MenuItem(key, name, runnable);
@@ -55,38 +38,32 @@ public class GenericMenu {
 
 	/**
 	 * Runs the runnable of the menu item that matches the given key
-	 * 
-	 * @param key
-	 *            key of the menu item to run the runnable of
-	 * @throws Exception
-	 *             exception when there is no matching menu item found for the
-	 *             given key
 	 */
 	private void runCommand(String key) throws Exception {
 		ArrayList<MenuItem> filteredMenuItems = new ArrayList<MenuItem>();
 
-		// filter through the menu items, checking if the given key corresponds
-		// to a MenuItem
+		/**
+		 * checking if the given key corresponds to a MenuItem
+		 */
+		
 		for (MenuItem i : menuItems) {
 			if (i.getKey().toLowerCase().equals(key))
 				filteredMenuItems.add(i);
 		}
 
 		if (filteredMenuItems.size() > 0) {
-			// if there are any menu items with the given key, run their
-			// runnables
+			/**
+			 * if there are any menu items with the given key, run their runnables
+			 */
 			for (MenuItem i : filteredMenuItems) {
 				i.getRunnable().run();
 			}
 		} else
-			// if not, throw an exception that the key doesn't exist
-			throw new Exception("No valid option for '" + key + "' found, try again.");
+			throw new Exception("Choix invalide! Pouvez-vous réessayer?");
 	}
 
 	/**
 	 * Makes the scanner wait for a line of input
-	 * 
-	 * @return returns the input as String
 	 */
 	private String scanLine() {
 		System.out.print("> ");
@@ -95,45 +72,49 @@ public class GenericMenu {
 
 	/**
 	 * Adds the default menu items, for example the quit menu item should always
-	 * be in there Beware: default menu items should always be added to the
-	 * input switch
+	 * be in there.
 	 */
-	private void addDefaultMenuItems() {
-		addMenuItem("Q", "Quit");
+	private void addDefaultMenuItems(boolean isFirst) {
+		if (isFirst) addMenuItem("Q", "Quitter");
+		else addMenuItem("R", "Retour");
 	}
 
-	public void initMenu() {
-		addDefaultMenuItems();
+	public void initMenu(boolean isFirst) {
+		
+		addDefaultMenuItems(isFirst);
 
 		Boolean quit = false;
 
 		while (!quit) {
-			// print instructions
-			System.out.println("--- Options ---");
+			/* print instructions */
+			System.out.println("--- Menu ---");
 
-			// print the menu items every time
+			/* print the menu items every time */
 			printMenuItems();
 
-			// allow for input
+			/* allow for input */
 			String option = scanLine();
 
-			// show the input
-			System.out.println("\nEntered " + option);
+			/* show the input */
+			System.out.println("\nOption choisie " + option);
 
 			option = option.toLowerCase();
 
-			// act depending on the input
+			/* act depending on the input */
 			try {
 				switch (option) {
-				case "q":
-					System.out.println("Quitting application...");
+				case "r":
 					quit = true;
+					break;
+				case "q":
+					System.out.println("Application arrêtée avec succès!");
+					System.exit(0);
 					break;
 				default:
 					try {
 						runCommand(option);
 					} catch (Exception ex) {
-						System.out.println("An error has occured: " + ex.getMessage());
+						System.out.println("Oops!: " + ex.getMessage());
 					}
 					break;
 				}
