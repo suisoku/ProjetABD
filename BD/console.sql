@@ -1,3 +1,4 @@
+drop view Client_Use_Image;
 drop table AdminCommande;
 drop table AdminClient;
 drop table AdminImage;
@@ -19,7 +20,6 @@ drop table Photo_Impression;
 drop table Photo;
 drop table Commande_Impression;
 drop table Impression;
-drop table Client_Use_Image;
 drop table Image;
 drop table Commande;
 drop table CodePromo;
@@ -34,17 +34,21 @@ Create table Client
   nom       varchar2(250) NOT NULL,
   prenom    varchar2(250) NOT NULL,
   mdp       varchar2(250) NOT NULL,
-  telephone number(10)    NOT NULL
+  telephone number(10)    NOT NULL,
+  actif     varchar2(1) NOT NULL,
+  attenteDesactif varchar2(1) NOT NULL,
+  constraint client_c1 check ( actif in ('1', '0')),
+  constraint client_c2 check ( attenteDesactif in ('1', '0'))
 );
 
 
 
 Create table Adresse
 (
+  idAdresse NUMBER primary key,
   idClient   NUMBER,
   nomAdresse varchar2(250),
   Adresse    varchar2(40) NOT NULL,
-  constraint pk_Adresse primary key (idClient, nomAdresse),
   CONSTRAINT fk_Adresse Foreign key (idClient) references Client (idClient) on delete cascade
 );
 
@@ -67,7 +71,8 @@ Create table Commande
 (
   idCommande    NUMBER primary key,
   idClient      NUMBER,
-  datePaiemant  date          NOT NULL,
+  idAdresse     NUMBER,
+  datePaiemant  date         NOT NULL,
   montant       NUMBER       NOT NULL,
   historise     NUMBER(1)    NOT NULL,
   renduPdf      varchar2(250) NOT NULL,
@@ -77,10 +82,16 @@ Create table Commande
   constraint commande_c2 check (modeLivraison in ('PointRelais', 'Domicile')),
   constraint commande_c3 check (historise in ('1', '0')),
   constraint commande_c4 check (montant >= 0),
-  constraint commande_c3 check (historise in ('1', '0')),
-  constraint fk_commande Foreign key (idClient) references Client (idClient) on delete set null
+  constraint commande_c5 check (historise in ('1', '0')),
+  constraint fk_commande1 foreign key (idAdresse) references  Adresse(idAdresse) on delete set null,
+  constraint fk_commande2 Foreign key (idClient) references Client (idClient) on delete set null
 );
 
+/*
+  FileAttente 0  ==> Pas en file d attente
+              1  ==> File d attente de modification de partage
+              2  ==> File d attente de suppression
+ */
 Create table Image
 (
   chemin          varchar2(250) primary key,
@@ -88,18 +99,11 @@ Create table Image
   resolution      varchar2(2) NOT NULL,
   partager        NUMBER(1) NOT NULL,
   dateUtilisation date NOT NULL,
+  fileAttente     varchar2(1) NOT NULL,
   constraint image_c1 check (resolution in ('2K', '4K', '8K')),
   constraint image_c2 check (partager in ('1', '0')),
+  constraint image_c3 check (fileAttente in ('0','1','2')),
   constraint fk_image Foreign key (idClient) references Client (idClient)
-);
-
-Create table Client_Use_Image
-(
-  idClient integer,
-  chemin varchar2(250),
-  primary key (idClient,chemin),
-  foreign key (idClient) references Client(idClient),
-  foreign key (chemin) references Image(chemin)
 );
 
 Create table Photo
@@ -283,7 +287,6 @@ Create table AdminClient
 );
 
 
--- erreur sur le rendu, il y a idImage au lieu de chemin
 Create table AdminImage
 (
   idAdmin   NUMBER,
@@ -314,5 +317,21 @@ Create table AdminCommande
   constraint fk_AdminCommande1 Foreign key (idAdmin) references Admin (idAdmin) on delete set null,
   constraint fk_AdminCommande2 Foreign key (idCommande) references Commande (idCommande) on delete set null
 );
+
+create view Client_Use_Image as
+select c.IDCLIENT, p.CHEMIN, p.IDPHOTO, pi.IDIMPRESSION, 'NON' AS "OWNER"
+  from image i join photo p on i.CHEMIN = p.CHEMIN
+  join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
+  join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
+  join CLIENT c on im.IDCLIENT = c.IDCLIENT
+where c.IDCLIENT <> i.IDCLIENT and i.PARTAGER = 1
+union
+select I.IDCLIENT,P.CHEMIN,p.idPhoto, pi.IDIMPRESSION, 'OUI' AS "OWNER"
+  from CLIENT c join IMAGE i on c.IDCLIENT = i.IDCLIENT
+  join PHOTO p on I.chemin = P.chemin
+  join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
+  join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
+                        and im.IDCLIENT = c.IDCLIENT;
+
 
 commit ;
