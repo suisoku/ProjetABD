@@ -22,6 +22,7 @@ public class Admin {
 		this.nom = nom;
 		this.mail = mail;
 		this.mdp = mdp;
+		this.prenom = prenom;
 	}
 
 	

@@ -86,7 +86,7 @@ public class QueryMethods {
 						row.get(3).toString(), 
 						row.get(4).toString()); 
 		}
-		ResQ adCl = ConnectionBD.getData(con, "select * from admin_client where idadmin="+idAdmin+"");
+		ResQ adCl = ConnectionBD.getData(con, "select * from adminclient where idadmin="+idAdmin+"");
 		
 		c.setAdmin_client(  (ArrayList<AdminHist>) (adCl.stream().map(s -> new AdminHist(
 							Integer.parseInt(s.get(0).toString()),
@@ -95,7 +95,7 @@ public class QueryMethods {
 							).collect(Collectors.toList())
 				));
 		
-		ResQ adCl2 = ConnectionBD.getData(con, "select * from admin_commande where idadmin="+idAdmin+"");
+		ResQ adCl2 = ConnectionBD.getData(con, "select * from admincommande where idadmin="+idAdmin+"");
 		
 		c.setAdmin_commande(  (ArrayList<AdminHist>) (adCl2.stream().map(s -> new AdminHist(
 				Integer.parseInt(s.get(0).toString()),
@@ -104,7 +104,7 @@ public class QueryMethods {
 				).collect(Collectors.toList())	
 		));
 		
-		ResQ adCl3 = ConnectionBD.getData(con, "select * from admin_inventaire where idadmin="+idAdmin+"");
+		ResQ adCl3 = ConnectionBD.getData(con, "select * from admininventaire where idadmin="+idAdmin+"");
 		
 		c.setAdmin_inventaire(  (ArrayList<AdminHist>) (adCl3.stream().map(s -> new AdminHist(
 				Integer.parseInt(s.get(0).toString()),
@@ -113,7 +113,7 @@ public class QueryMethods {
 				).collect(Collectors.toList())	
 		));
 		
-		ResQ adCl4 = ConnectionBD.getData(con, "select * from admin_image where idadmin="+idAdmin+"");
+		ResQ adCl4 = ConnectionBD.getData(con, "select * from adminimage where idadmin="+idAdmin+"");
 		
 		c.setAdmin_image(  (ArrayList<AdminHist>) (adCl4.stream().map(s -> new AdminHist(
 				Integer.parseInt(s.get(0).toString()),
@@ -121,7 +121,7 @@ public class QueryMethods {
 				(Date)s.get(2))
 				).collect(Collectors.toList())	
 		));
-
+		
 
 		// 2Darraylist --map-> Stream<<AdminHist>> -Collector.toList-> cast ArrayList<AdminHist>->> ajout dans objet Admin 
 
