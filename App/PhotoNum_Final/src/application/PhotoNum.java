@@ -1,6 +1,6 @@
 package application;
 
-import navigation_handlers.MenuHandler;
+import navigation_handlers.ClientMenuHandler;
 import navigation_handlers.core.*;
 
 public class PhotoNum {
@@ -10,7 +10,7 @@ public class PhotoNum {
 
 		// Adding a menu item using a Lambda expression.
 		interactionTypeChoice.addMenuItem("0", "Normal mode", () -> {
-			MenuHandler.start();
+			ClientMenuHandler.start();
 		});
 
 		// Adding another menu item 

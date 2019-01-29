@@ -6,7 +6,7 @@ import java.util.Map;
 
 import navigation_handlers.core.GenericMenu;
 
-public class MenuHandler {
+public class ClientMenuHandler {
 	static HashMap<String, Runnable> map = new HashMap<>();
 
 	/***
