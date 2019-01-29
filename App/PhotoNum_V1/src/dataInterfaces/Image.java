@@ -11,11 +11,11 @@ public class Image {
 	private boolean partager;
 	private Date dateUtilisation;
 
-	public Image(String chemin, int idClient, String resolution, int partager, Date dateUtilisation, int fileAttente ) {
+	public Image(String chemin, int idClient, String resolution, boolean partager, Date dateUtilisation, int fileAttente ) {
 		this.chemin = chemin;
 		this.idClient = idClient;
 		this.resolution = resolution;
-		this.partager = (partager == 1) ? true : false;
+		this.partager = partager;
 		this.dateUtilisation = dateUtilisation;
 		this.fileAttente = fileAttente;
 	}

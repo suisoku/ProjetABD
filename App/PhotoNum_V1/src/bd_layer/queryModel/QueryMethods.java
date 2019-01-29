@@ -288,7 +288,7 @@ public class QueryMethods {
 					row.get(0).toString(), 
 					Integer.parseInt(row.get(1).toString()),
 					row.get(2).toString(),
-					Integer.parseInt(row.get(3).toString()),
+					row.get(3).toString()  == "1" ? true : false,
 					(Date)row.get(4),
 					Integer.parseInt(row.get(5).toString())
 				);
@@ -528,6 +528,11 @@ public class QueryMethods {
 		ConnectionBD.updateData(con, "image", conds, new ArrayList<Tuple>(Arrays.asList(values)));
 	}
 	
+	// update commande 
+	// update impression
+	
+	
+	/** -------      MISC PART -----------**/
 	public float prixImpression(Impression im) throws SQLException {
 		
 		int idproduit = (int) im.getTypeImpression().attributes.get("IDPRODUIT");
@@ -535,6 +540,7 @@ public class QueryMethods {
 		return pi.getPrix();
 	}
 	
-	
-	
+	public void getStatImages() {
+		
+	}
 }
