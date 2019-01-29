@@ -10,4 +10,9 @@ public class ImpressionHandler {
 		System.out.println("Mise à jour impression réussie");
 	}
 
+	public static void delete() {
+		System.out.println("Suppression impression réussi");
+
+	}
+
 }

@@ -9,6 +9,7 @@ import dataInterfaces.Adresse;
 import dataInterfaces.Client;
 import dataInterfaces.CodePromo;
 import dataInterfaces.Image;
+import navigation_handlers.core.GenericMenu;
 
 public class ClientHandler {
 
@@ -25,6 +26,30 @@ public class ClientHandler {
 		}
 		
 	}
+	
+	public static void updatePhoto() {
+		System.out.println("Opération de mise à jour réussie");
+	}
+	
+	public static void createImpression() {
+		System.out.println("Ajout impression réussi");
+	}
+
+	public static void updateImpression() {
+		GenericMenu interactionTypeChoice = new GenericMenu();
+
+		interactionTypeChoice.addMenuItem("0", "Supprimer impression", () -> {
+			ImpressionHandler.delete();
+		});
+
+		interactionTypeChoice.addMenuItem("1", "Modifier impression", () -> {
+			ImpressionHandler.update();
+		});
+		
+		// Launching the app via the menu
+		interactionTypeChoice.initMenu(false);
+	}
+	
 	
 	public static void addImage() {
 		

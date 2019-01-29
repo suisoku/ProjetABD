@@ -14,9 +14,9 @@ public class ClientMenuHandler {
 	 */
 	private static void load() {
 		map.put("Ajouter un client", ClientHandler::add);
-		map.put("Créer une impression", ImpressionHandler::create);
-		map.put("Modifier/Supprimer une impression", ImpressionHandler::update);
-		map.put("Modifier/supprimer une photo", PhotoHandler::update);
+		map.put("Créer une impression", ClientHandler::createImpression);
+		map.put("Modifier/Supprimer une impression", ClientHandler::updateImpression);
+		map.put("Modifier/supprimer une photo", ClientHandler::updatePhoto);
 		map.put("Supprimer une image", ClientHandler::delete);
 		map.put("Voir les statistiques sur les images", ImageHandler::getStats);
 		map.put("Consulter mes informations", ClientHandler::showDetails);
