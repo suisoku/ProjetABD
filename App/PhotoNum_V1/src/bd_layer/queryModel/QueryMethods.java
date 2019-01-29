@@ -37,19 +37,17 @@ import dataInterfaces.TypeImpression;
  */
 public class QueryMethods {
 	
+
+  private final static Connection con = ConnectionBD.getConnection();
 	
-	private  Connection con;
-	
-	public  QueryMethods() {
-		 con = ConnectionBD.getConnection();
-	}
+
 	public int getLastIndex(String table , String selector) throws SQLException {
 		
 		ResQ array = ConnectionBD.getData(con, "select max("+selector+") from" + table);
 		
 		return Integer.parseInt(array.get(0).get(0).toString());
 	}
-	
+
 	public ProduitInventaire getProduitInventaire(int idProduit) throws SQLException {
 		ResQ array = ConnectionBD.getData(con, "select * from inventaire where idproduit="+idProduit +"");
 		ProduitInventaire product= null;
