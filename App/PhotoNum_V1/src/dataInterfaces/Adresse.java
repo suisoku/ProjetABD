@@ -3,12 +3,13 @@ package dataInterfaces;
 public class Adresse {
 	
 	private String nomAdresse, adresse;
-	private int idClient;
+	private int idClient, idAdresse;
 	
-	public Adresse (int idClient , String nomAdresse, String adresse ) {
+	public Adresse (int idAdresse, int idClient , String nomAdresse, String adresse ) {
 		this.setAdresse(adresse);
 		this.setNomAdresse(nomAdresse);
 		this.setIdClient(idClient);
+		this.idAdresse = idAdresse;
 	}
 	
 	
@@ -18,6 +19,15 @@ public class Adresse {
 	public int getIdClient() {
 		return idClient;
 	}
+
+	public int getIdAdresse() {
+		return idAdresse;
+	}
+
+	public void setIdAdresse(int idAdresse) {
+		this.idAdresse = idAdresse;
+	}
+
 
 	public void setIdClient(int idClient) {
 		this.idClient = idClient;
