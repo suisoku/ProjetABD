@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import bd_layer.ConnectionBD;
@@ -528,8 +529,14 @@ public class QueryMethods {
 		ConnectionBD.updateData(con, "image", conds, new ArrayList<Tuple>(Arrays.asList(values)));
 	}
 	
-	// update commande 
-	// update impression
+	// update commande
+	
+	public void updateCommande(int idCommande, Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idcommande" , idCommande + ""));
+		ConnectionBD.updateData(con, "commande", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
 	
 	
 	/** -------      MISC PART -----------**/
@@ -540,7 +547,9 @@ public class QueryMethods {
 		return pi.getPrix();
 	}
 	
-	public void getStatImages() {
-		
+	public ArrayList<Tuple> getStatImages() throws SQLException {
+		ResQ a = ConnectionBD.getData(con,
+				"select chemin, count(idimpression) as coutImp from CLIENT_USE_IMAGE group by chemin order by coutImp desc");
+		return (ArrayList<Tuple>) a.stream().map(s -> new Tuple(s.get(0).toString() , s.get(1).toString())).collect(Collectors.toList());
 	}
 }

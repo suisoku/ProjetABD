@@ -29,6 +29,10 @@ public class TestQuery3 {
 				System.out.println(ah.idAdmin + " | " + ah.identifier.toString()  + " | " + ah.date.toString() )
 			);
 		System.out.println("------------------------------");
+		
+		System.out.println("------- TEST STAT IMAGE ---------");
+			cq.getStatImages().forEach(t -> System.out.println(t.toString()));
+		System.out.println("------------------------------");
 	}
 	
 	
