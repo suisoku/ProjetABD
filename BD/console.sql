@@ -122,7 +122,9 @@ Create table Impression
   idImpression NUMBER primary key,
   idClient     NUMBER,
   nom          varchar2(250) NOT NULL,
-  constraint fk_impression Foreign key (idClient) references Client (idClient) on delete cascade
+  typeIm       varchar2(10) not null,
+  constraint fk_impression Foreign key (idClient) references Client (idClient) on delete cascade,
+  constraint impression check (typeIm in ('cadre','agenda','calendrier','album','tirage'))
 );
 
 
