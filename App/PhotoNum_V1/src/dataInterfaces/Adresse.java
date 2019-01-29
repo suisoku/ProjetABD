@@ -5,7 +5,7 @@ public class Adresse {
 	private String nomAdresse, adresse;
 	private int idClient;
 	
-	public Adresse (String nomAdresse, String adresse, int idClient) {
+	public Adresse (int idClient , String nomAdresse, String adresse ) {
 		this.setAdresse(adresse);
 		this.setNomAdresse(nomAdresse);
 		this.setIdClient(idClient);
@@ -38,5 +38,7 @@ public class Adresse {
 	public void setNomAdresse(String nomAdresse) {
 		this.nomAdresse = nomAdresse;
 	}
+
+
 
 }

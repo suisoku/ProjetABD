@@ -1,14 +1,15 @@
 package dataInterfaces;
 
 public class CodePromo {
-	private int code, reduction, idClient;
+	private int code, idClient;
+	private float reduction;
 	private boolean used;
 	
-	public CodePromo(int code, int reduction, int idClient) {
+	public CodePromo(int code, float reduction, int usedB , int idClient) {
 		this.code = code;
 		this.reduction = reduction;
 		this.idClient = idClient;
-		this.used = false;
+		this.used = (usedB == 1) ? true : false;
 	}
 	
 	
@@ -24,11 +25,11 @@ public class CodePromo {
 		this.code = code;
 	}
 
-	public int getReduction() {
+	public float getReduction() {
 		return reduction;
 	}
 
-	public void setReduction(int reduction) {
+	public void setReduction(float reduction) {
 		this.reduction = reduction;
 	}
 
@@ -47,5 +48,6 @@ public class CodePromo {
 	public void setUsed(boolean used) {
 		this.used = used;
 	}
+	
 
 }

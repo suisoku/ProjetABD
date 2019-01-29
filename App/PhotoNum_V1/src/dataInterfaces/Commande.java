@@ -1,29 +1,42 @@
 package dataInterfaces;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import enums.ModeLivraison;
 import enums.Statut;
 
 public class Commande {
-
+	// statut and modelivraison
 	private int idCmd, idClient;
 	private Date datePaiement;
 	private float montant;
-	private ModeLivraison modeLivraison;
-	private Statut statut;
+	private String modeLivraison;
+	private String statut;
 	private boolean historise;
 	private String renduPdf;
-
-	public Commande(int idCmd, int idClient, Date datePaiement, float montant, ModeLivraison modeLivraison,
-			Statut statut) {
+	private ArrayList<CommandeImpression> commandeImpressions;
+	
+	public Commande(int idCmd, int idClient, Date datePaiement, float montant,int historise, String rendu , 
+			String statut, String modeLivraison, ArrayList<CommandeImpression> ci) 
+	{
 		this.idCmd = idCmd;
 		this.idClient = idClient;
 		this.datePaiement = datePaiement;
 		this.modeLivraison = modeLivraison;
 		this.montant = montant;
 		this.statut = statut;
-		this.historise = true;
+		this.historise = (historise == 1) ? true : false;
+		this.commandeImpressions= ci ;
+		this.renduPdf = rendu;
+	}
+
+	public ArrayList<CommandeImpression> getCommandeImpressions() {
+		return commandeImpressions;
+	}
+
+	public void setCommandeImpressions(ArrayList<CommandeImpression> commandeImpressions) {
+		this.commandeImpressions = commandeImpressions;
 	}
 
 	public int getIdCmd() {
@@ -58,19 +71,19 @@ public class Commande {
 		this.montant = montant;
 	}
 
-	public ModeLivraison getModeLivraison() {
+	public String getModeLivraison() {
 		return modeLivraison;
 	}
 
-	public void setModeLivraison(ModeLivraison modeLivraison) {
+	public void setModeLivraison(String modeLivraison) {
 		this.modeLivraison = modeLivraison;
 	}
 
-	public Statut getStatut() {
+	public String getStatut() {
 		return statut;
 	}
 
-	public void setStatut(Statut statut) {
+	public void setStatut(String statut) {
 		this.statut = statut;
 	}
 

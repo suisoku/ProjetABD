@@ -7,15 +7,15 @@ import enums.Resolution;
 public class Image {
 	private String chemin;
 	private int idClient;
-	private Resolution resolution;
+	private String resolution;
 	private boolean partager;
 	private Date dateUtilisation;
 
-	public Image(String chemin, int idClient, Resolution resolution, boolean partager, Date dateUtilisation) {
+	public Image(String chemin, int idClient, String resolution, int partager, Date dateUtilisation) {
 		this.chemin = chemin;
 		this.idClient = idClient;
 		this.resolution = resolution;
-		this.partager = partager;
+		this.partager = (partager == 1) ? true : false;
 		this.dateUtilisation = dateUtilisation;
 	}
 	
@@ -35,11 +35,11 @@ public class Image {
 		this.idClient = idClient;
 	}
 
-	public Resolution getResolution() {
+	public String getResolution() {
 		return resolution;
 	}
 
-	public void setResolution(Resolution resolution) {
+	public void setResolution(String resolution) {
 		this.resolution = resolution;
 	}
 
