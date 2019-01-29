@@ -42,10 +42,9 @@ public class QueryMethods {
 	
 
 	public int getLastIndex(String table , String selector) throws SQLException {
-		
 		ResQ array = ConnectionBD.getData(con, "select max("+selector+") from" + table);
-		
-		return Integer.parseInt(array.get(0).get(0).toString());
+		int index = Integer.parseInt(array.get(0).get(0).toString()) +1;
+		return index;
 	}
 
 	public ProduitInventaire getProduitInventaire(int idProduit) throws SQLException {
@@ -63,14 +62,13 @@ public class QueryMethods {
 		}
 		return product;
 	}
-	
-	
+
 	public Client getClient(int clientId) throws SQLException {
 		ResQ array = ConnectionBD.getData(con, "select * from client where idclient="+clientId +"");
 		Client c = null;
 		for(ArrayList<Object> row : array) {
 				c = new Client(Integer.parseInt(row.get(0).toString()) , row.get(1).toString() , row.get(2).toString() , 
-						row.get(3).toString() , row.get(4).toString(), row.get(5).toString(),
+						row.get(3).toString() , row.get(4).toString(), row.get(5).toString(), row.get(6).toString(),
 						getClientAdresses(clientId),
 						getClientPromos(clientId));
 		}
@@ -135,7 +133,8 @@ public class QueryMethods {
 		ArrayList<Adresse> adressList = new ArrayList<Adresse>();
 		
 		for(ArrayList<Object> row : array) {
-			adressList.add(new Adresse(Integer.parseInt(row.get(0).toString()), row.get(1).toString() , row.get(2).toString()));
+			adressList.add(new Adresse(Integer.parseInt(row.get(0).toString()),
+							Integer.parseInt(row.get(1).toString()), row.get(2).toString() , row.get(3).toString()));
 		}
 		return adressList;
 	}
@@ -145,9 +144,9 @@ public class QueryMethods {
 		ArrayList<CodePromo> codeList = new ArrayList<CodePromo>();
 		
 		for(ArrayList<Object> row : array) {
-			codeList.add(new CodePromo(Integer.parseInt(row.get(0).toString()), 
-					Float.parseFloat(row.get(1).toString()) , Integer.parseInt(row.get(2).toString()),
-					Integer.parseInt(row.get(3).toString()) ));
+			codeList.add(new CodePromo(Integer.parseInt(row.get(0).toString()), Integer.parseInt(row.get(1).toString()),
+					Float.parseFloat(row.get(2).toString()) , Integer.parseInt(row.get(3).toString()),
+					Integer.parseInt(row.get(4).toString()) ));
 		}
 		return codeList;
 	}
@@ -160,13 +159,14 @@ public class QueryMethods {
 			codeList.add(new Commande(
 					Integer.parseInt(row.get(0).toString()), 
 					Integer.parseInt(row.get(1).toString()), 
-					(Date)row.get(2),
-					Float.parseFloat(row.get(3).toString()),
-					Integer.parseInt(row.get(4).toString()),
-					row.get(5).toString(),
+					Integer.parseInt(row.get(2).toString()), 
+					(Date)row.get(3),
+					Float.parseFloat(row.get(4).toString()),
+					Integer.parseInt(row.get(5).toString()),
 					row.get(6).toString(),
 					row.get(7).toString(),
-					getCommmandeImpression(Integer.parseInt(row.get(0).toString()) )
+					row.get(8).toString(),
+					getCommmandeImpression(Integer.parseInt(row.get(9).toString()) )
 			));
 		}
 		return codeList;
@@ -289,7 +289,8 @@ public class QueryMethods {
 					Integer.parseInt(row.get(1).toString()),
 					row.get(2).toString(),
 					Integer.parseInt(row.get(3).toString()),
-					(Date)row.get(4)
+					(Date)row.get(4),
+					Integer.parseInt(row.get(5).toString())
 				);
 		}
 		return codeList;
@@ -304,17 +305,16 @@ public class QueryMethods {
 	public void addClient(Client client) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		
-		values.add(client.getIdClient()+"");
+		values.add(getLastIndex("client", "idclient")+"");
 		values.add(client.getMail());
 		values.add(client.getNom());
 		values.add(client.getPrenom());
 		values.add(client.getMdp());
 		values.add(client.getTelephone());
+		values.add(client.getActif());
 		
 		ConnectionBD.addData(con, "client", values);
 	}
-	
-	
 	
 	public void deleteClient(int idClient) throws SQLException {
 		ArrayList<Tuple> cond = new ArrayList<Tuple>();
@@ -351,7 +351,7 @@ public class QueryMethods {
 	public void addPhoto(Photo photo) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		
-		values.add(photo.getIdPhoto()+ "");
+		values.add(getLastIndex("photo", "idphoto")+ "");
 		values.add(photo.getChemin() );
 		values.add(photo.getCommentaire());
 		values.add(photo.getTypeRetouche());
@@ -364,7 +364,7 @@ public class QueryMethods {
 		ArrayList<String> values = new ArrayList<String>();
 		TypeImpression ti = impression.getTypeImpression();
 		
-		values.add(impression.getIdImpression() + "");
+		values.add(getLastIndex("impression", "idimpression") + "");
 		values.add(impression.getIdClient() + "");
 		values.add(impression.getNom());
 		values.add(ti.type.name());
@@ -413,7 +413,7 @@ public class QueryMethods {
 	public void addCommande(Commande c) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		
-		values.add(c.getIdCmd() + "");
+		values.add(getLastIndex("commande", "idcommande") + "");
 		values.add(c.getIdClient() + "");
 		String dateS = new SimpleDateFormat("dd-MMM-yy").format(c.getDatePaiement());
 		values.add(dateS);
@@ -429,6 +429,7 @@ public class QueryMethods {
 	public void addAdresse(Adresse s) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		
+		values.add(getLastIndex("adresse", "idadresse")+"");
 		values.add(s.getIdClient()+"");
 		values.add(s.getNomAdresse());
 		values.add(s.getAdresse());
@@ -439,6 +440,7 @@ public class QueryMethods {
 	public void addCodePromo(CodePromo cp) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		
+		values.add(getLastIndex("codepromo", "idcode") +"");
 		values.add(cp.getCode()+"");
 		values.add(cp.getReduction()+"");
 		values.add(cp.isUsed() ? "1" : "0" );

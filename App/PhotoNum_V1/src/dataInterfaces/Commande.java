@@ -3,12 +3,9 @@ package dataInterfaces;
 import java.util.ArrayList;
 import java.util.Date;
 
-import enums.ModeLivraison;
-import enums.Statut;
-
 public class Commande {
 	// statut and modelivraison
-	private int idCmd, idClient;
+	private int idCmd, idClient, idAdresse;
 	private Date datePaiement;
 	private float montant;
 	private String modeLivraison;
@@ -17,7 +14,7 @@ public class Commande {
 	private String renduPdf;
 	private ArrayList<CommandeImpression> commandeImpressions;
 	
-	public Commande(int idCmd, int idClient, Date datePaiement, float montant,int historise, String rendu , 
+	public Commande(int idCmd, int idClient, int idAdresse , Date datePaiement, float montant,int historise, String rendu , 
 			String statut, String modeLivraison, ArrayList<CommandeImpression> ci) 
 	{
 		this.idCmd = idCmd;
@@ -29,6 +26,17 @@ public class Commande {
 		this.historise = (historise == 1) ? true : false;
 		this.commandeImpressions= ci ;
 		this.renduPdf = rendu;
+		this.idAdresse = idAdresse;
+		
+	}
+		
+	
+	public int getIdAdresse() {
+		return idAdresse;
+	}
+
+	public void setIdAdresse(int idAdresse) {
+		this.idAdresse = idAdresse;
 	}
 
 	public ArrayList<CommandeImpression> getCommandeImpressions() {
