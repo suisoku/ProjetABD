@@ -36,9 +36,7 @@ Create table Client
   mdp       varchar2(250) NOT NULL,
   telephone number(10)    NOT NULL,
   actif     varchar2(1) NOT NULL,
-  attenteDesactif varchar2(1) NOT NULL,
-  constraint client_c1 check ( actif in ('1', '0')),
-  constraint client_c2 check ( attenteDesactif in ('1', '0'))
+  constraint client_c1 check ( actif in ('1', '0'))
 );
 
 
