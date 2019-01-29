@@ -8,6 +8,12 @@ public class Image {
 	private String resolution;
 	private boolean partager;
 	private Date dateUtilisation;
+	
+	public Image(String chemin, int idClient, boolean partager ) {
+		this.chemin = chemin;
+		this.idClient = idClient;
+		this.partager = partager;
+	}
 
 	public Image(String chemin, int idClient, String resolution, boolean partager, Date dateUtilisation, int fileAttente ) {
 		this.chemin = chemin;

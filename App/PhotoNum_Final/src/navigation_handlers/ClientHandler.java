@@ -38,6 +38,21 @@ public class ClientHandler {
 		}
 		
 	}
+	
+	public static void delete() {
+		
+		System.out.println("Saisir le chemin de l'image");
+		String chemin = LectureClavier.lireChaine();
+		
+		try {
+			client_queries.deleteImage(chemin);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 
 	public static void showDetails() {
 		try {

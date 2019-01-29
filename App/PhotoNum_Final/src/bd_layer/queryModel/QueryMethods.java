@@ -42,7 +42,7 @@ public class QueryMethods {
 	
 
 	public int getLastIndex(String table , String selector) throws SQLException {
-		ResQ array = ConnectionBD.getData(con, "select max("+selector+") from" + table);
+		ResQ array = ConnectionBD.getData(con, "select max("+selector+") from " + table);
 		int index = Integer.parseInt(array.get(0).get(0).toString()) +1;
 		return index;
 	}
@@ -227,6 +227,17 @@ public class QueryMethods {
         stmt.close();
         
         return ti;
+	}
+	
+	public ArrayList<Image> getClientImages(int clientId) throws SQLException {
+		ResQ array = ConnectionBD.getData(con, "select chemin,id,partager from Image where idclient="+clientId +"");
+		ArrayList<Image> imageList = new ArrayList<Image>();
+		
+		for(ArrayList<Object> row : array) {
+			imageList.add(new Image(row.get(0).toString(),
+							Integer.parseInt(row.get(1).toString()), row.get(2).toString() == "1"? true:false));
+		}
+		return imageList;
 	}
 	
 	/** Je veux afficher les photos d'une impression **/
