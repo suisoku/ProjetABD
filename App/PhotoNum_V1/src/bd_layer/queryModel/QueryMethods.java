@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.TooManyListenersException;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
@@ -44,8 +43,13 @@ public class QueryMethods {
 	public  QueryMethods() {
 		 con = ConnectionBD.getConnection();
 	}
+	public int getLastIndex(String table , String selector) throws SQLException {
+		
+		ResQ array = ConnectionBD.getData(con, "select max("+selector+") from" + table);
+		
+		return Integer.parseInt(array.get(0).get(0).toString());
+	}
 	
-
 	public ProduitInventaire getProduitInventaire(int idProduit) throws SQLException {
 		ResQ array = ConnectionBD.getData(con, "select * from inventaire where idproduit="+idProduit +"");
 		ProduitInventaire product= null;
@@ -494,6 +498,7 @@ public class QueryMethods {
 		ConnectionBD.deleteData(con, "codepromo", cond);
 	}
 	
+	
 	/** UPDATE PART ----------------------------------------**/
 	
 	
@@ -523,11 +528,12 @@ public class QueryMethods {
 		ConnectionBD.updateData(con, "image", conds, new ArrayList<Tuple>(Arrays.asList(values)));
 	}
 	
-	
-	// method that sorts date use ?
-	
-	//method that gets alla history 
-	
+	public float prixImpression(Impression im) throws SQLException {
+		
+		int idproduit = (int) im.getTypeImpression().attributes.get("IDPRODUIT");
+		ProduitInventaire pi = getProduitInventaire(idproduit);
+		return pi.getPrix();
+	}
 	
 	
 	
