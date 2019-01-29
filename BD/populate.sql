@@ -1,9 +1,9 @@
 -- Insertion Clients --
-insert into client values (1, 'aduddle0@blogs.com', 'CHOUKCHOU', 'Zak', 'Sélène', '6775870746', '1', '1');
-insert into client values (2, 'jgalsworthy1@wikia.com', 'ZIANI', 'Nour', 'Mélodie', '4364464966', '1', '1');
-insert into client values (3, 'lbaddow2@si.edu', 'ROUBINEAU', 'Régis', 'Thérèse', '5079599510', '0', '0');
-insert into client values (4, 'ecrampton3@ftc.gov', 'FONTAINE', 'Yves', 'Aimée', '9762880707', '0', '1');
-insert into client values (5, 'gommundsen4@multiply.com', 'AIDARA', 'Sidson', 'Örjan', '8153318948', '0', '1');
+insert into client values (1, 'aduddle0@blogs.com', 'CHOUKCHOU', 'Zak', 'Sélène', '6775870746', '1');
+insert into client values (2, 'jgalsworthy1@wikia.com', 'ZIANI', 'Nour', 'Mélodie', '4364464966', '1');
+insert into client values (3, 'lbaddow2@si.edu', 'ROUBINEAU', 'Régis', 'Thérèse', '5079599510', '0');
+insert into client values (4, 'ecrampton3@ftc.gov', 'FONTAINE', 'Yves', 'Aimée', '9762880707', '0');
+insert into client values (5, 'gommundsen4@multiply.com', 'AIDARA', 'Sidson', 'Örjan', '8153318948', '0');
 -- Insertion Address --
 
 insert into Adresse values (1,1,'zakAddress','Madrid');
