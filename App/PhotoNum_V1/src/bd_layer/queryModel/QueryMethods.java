@@ -7,14 +7,16 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import bd_layer.ConnectionBD;
 import bd_layer.ResQ;
 import bd_layer.Tuple;
+import dataInterfaces.Admin;
+import dataInterfaces.AdminHist;
 import dataInterfaces.Adresse;
 import dataInterfaces.Client;
 import dataInterfaces.CodePromo;
@@ -35,8 +37,16 @@ import dataInterfaces.TypeImpression;
  */
 public class QueryMethods {
 	
+
+  private final static Connection con = ConnectionBD.getConnection();
 	
-	private final static Connection con = ConnectionBD.getConnection();
+
+	public int getLastIndex(String table , String selector) throws SQLException {
+		
+		ResQ array = ConnectionBD.getData(con, "select max("+selector+") from" + table);
+		
+		return Integer.parseInt(array.get(0).get(0).toString());
+	}
 
 	public ProduitInventaire getProduitInventaire(int idProduit) throws SQLException {
 		ResQ array = ConnectionBD.getData(con, "select * from inventaire where idproduit="+idProduit +"");
@@ -64,6 +74,59 @@ public class QueryMethods {
 						getClientAdresses(clientId),
 						getClientPromos(clientId));
 		}
+		return c;
+	}
+	
+	public Admin getAdmin(int idAdmin) throws SQLException {
+		ResQ array = ConnectionBD.getData(con, "select * from admin where idadmin="+idAdmin +"");
+		Admin c = null;
+		for(ArrayList<Object> row : array) {
+				c = new Admin(
+						Integer.parseInt(row.get(0).toString()), 
+						row.get(1).toString(), 
+						row.get(2).toString(), 
+						row.get(3).toString(), 
+						row.get(4).toString()); 
+		}
+		ResQ adCl = ConnectionBD.getData(con, "select * from adminclient where idadmin="+idAdmin+"");
+		
+		c.setAdmin_client(  (ArrayList<AdminHist>) (adCl.stream().map(s -> new AdminHist(
+							Integer.parseInt(s.get(0).toString()),
+			   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+							(Date)s.get(2))
+							).collect(Collectors.toList())
+				));
+		
+		ResQ adCl2 = ConnectionBD.getData(con, "select * from admincommande where idadmin="+idAdmin+"");
+		
+		c.setAdmin_commande(  (ArrayList<AdminHist>) (adCl2.stream().map(s -> new AdminHist(
+				Integer.parseInt(s.get(0).toString()),
+   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+				(Date)s.get(2))
+				).collect(Collectors.toList())	
+		));
+		
+		ResQ adCl3 = ConnectionBD.getData(con, "select * from admininventaire where idadmin="+idAdmin+"");
+		
+		c.setAdmin_inventaire(  (ArrayList<AdminHist>) (adCl3.stream().map(s -> new AdminHist(
+				Integer.parseInt(s.get(0).toString()),
+   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+				(Date)s.get(2))
+				).collect(Collectors.toList())	
+		));
+		
+		ResQ adCl4 = ConnectionBD.getData(con, "select * from adminimage where idadmin="+idAdmin+"");
+		
+		c.setAdmin_image(  (ArrayList<AdminHist>) (adCl4.stream().map(s -> new AdminHist(
+				Integer.parseInt(s.get(0).toString()),
+   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+				(Date)s.get(2))
+				).collect(Collectors.toList())	
+		));
+		
+
+		// 2Darraylist --map-> Stream<<AdminHist>> -Collector.toList-> cast ArrayList<AdminHist>->> ajout dans objet Admin 
+
 		return c;
 	}
 	
@@ -433,6 +496,7 @@ public class QueryMethods {
 		ConnectionBD.deleteData(con, "codepromo", cond);
 	}
 	
+	
 	/** UPDATE PART ----------------------------------------**/
 	
 	
@@ -442,4 +506,33 @@ public class QueryMethods {
 		
 		ConnectionBD.updateData(con, "client", conds, new ArrayList<Tuple>(Arrays.asList(values)));
 	}
+	
+	public void updateInventaire(int idProduit ,Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idProduit" , idProduit + ""));
+		ConnectionBD.updateData(con, "inventaire", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	public void updateCommandeImpression(int idCommande , int idImpression ,Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idCommande" , idCommande + ""));
+		conds.add(new Tuple("idImpression" , idImpression + ""));
+		ConnectionBD.updateData(con, "commande_impression", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	public void updateImage(String chemin, Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("chemin" , chemin + ""));
+		ConnectionBD.updateData(con, "image", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	public float prixImpression(Impression im) throws SQLException {
+		
+		int idproduit = (int) im.getTypeImpression().attributes.get("IDPRODUIT");
+		ProduitInventaire pi = getProduitInventaire(idproduit);
+		return pi.getPrix();
+	}
+	
+	
+	
 }

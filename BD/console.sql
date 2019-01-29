@@ -34,21 +34,24 @@ Create table Client
   nom       varchar2(250) NOT NULL,
   prenom    varchar2(250) NOT NULL,
   mdp       varchar2(250) NOT NULL,
-  telephone number(10)    NOT NULL
+  telephone number(10)    NOT NULL,
+  actif     varchar2(1) NOT NULL,
+  constraint client_c1 check ( actif in ('1', '0'))
 );
 
 
 
 Create table Adresse
 (
+  idAdresse NUMBER primary key,
   idClient   NUMBER,
   nomAdresse varchar2(250),
   Adresse    varchar2(40) NOT NULL,
-  constraint pk_Adresse primary key (idClient, nomAdresse),
   CONSTRAINT fk_Adresse Foreign key (idClient) references Client (idClient) on delete cascade
 );
 
- Create table CodePromo
+
+Create table CodePromo
 (
   idCode    number(10) primary key,
   code      varchar2(250) NOT NULL,
@@ -66,8 +69,9 @@ Create table Commande
 (
   idCommande    NUMBER primary key,
   idClient      NUMBER,
-  datePaiemant  date          NOT NULL,
-  montant       float       NOT NULL,
+  idAdresse     NUMBER,
+  datePaiemant  date         NOT NULL,
+  montant       NUMBER       NOT NULL,
   historise     NUMBER(1)    NOT NULL,
   renduPdf      varchar2(250) NOT NULL,
   statut        varchar2(250) NOT NULL,
@@ -76,18 +80,27 @@ Create table Commande
   constraint commande_c2 check (modeLivraison in ('PointRelais', 'Domicile')),
   constraint commande_c3 check (historise in ('1', '0')),
   constraint commande_c4 check (montant >= 0),
-  constraint fk_commande Foreign key (idClient) references Client (idClient) on delete set null
+  constraint commande_c5 check (historise in ('1', '0')),
+  constraint fk_commande1 foreign key (idAdresse) references  Adresse(idAdresse) on delete set null,
+  constraint fk_commande2 Foreign key (idClient) references Client (idClient) on delete set null
 );
 
+/*
+  FileAttente 0  ==> Pas en file d attente
+              1  ==> File d attente de modification de partage
+              2  ==> File d attente de suppression
+ */
 Create table Image
 (
   chemin          varchar2(250) primary key,
   idClient        NUMBER,
-  resolution      varchar2(2),
-  partager        NUMBER(1),
-  dateUtilisation date,
+  resolution      varchar2(2) NOT NULL,
+  partager        NUMBER(1) NOT NULL,
+  dateUtilisation date NOT NULL,
+  fileAttente     varchar2(1) NOT NULL,
   constraint image_c1 check (resolution in ('2K', '4K', '8K')),
   constraint image_c2 check (partager in ('1', '0')),
+  constraint image_c3 check (fileAttente in ('0','1','2')),
   constraint fk_image Foreign key (idClient) references Client (idClient)
 );
 
@@ -119,9 +132,9 @@ create TABLE Commande_Impression
   idImpression NUMBER,
   quantite     NUMBER not null,
   constraint pk_CommandeImpression primary key (idCommande, idImpression),
-  constraint fk_CommandeImpression1 foreign key (idCommande) references Commande (idCommande),
-  constraint fk_CommandeImpression2 foreign key (idImpression) references Impression (idImpression) on delete set null,
-  constraint CommandeImpression check (quantite > 0 )
+  constraint commande_impression_c1 check (quantite > 0),
+  constraint fk_CommandeImpression1 foreign key (idCommande) references Commande (idCommande) on delete set null,
+  constraint fk_CommandeImpression2 foreign key (idImpression) references Impression (idImpression) on delete set null
 );
 
 Create table Photo_Impression
@@ -140,10 +153,9 @@ Create table Photo_Tirage_Impression
   idPhoto      NUMBER,
   idImpression NUMBER,
   quantite     NUMBER NOT NULL,
-  constraint Photo_Tirage_Impression check (quantite > 0 ),
   constraint pk_PhotoTirageImpression primary key (idPhoto, idImpression),
   constraint fk_PhotoTirageImpression
-  Foreign key (idPhoto, idImpression) references Photo_Impression (idPhoto, idImpression)
+    Foreign key (idPhoto, idImpression) references Photo_Impression (idPhoto, idImpression)
 );
 
 
@@ -154,8 +166,8 @@ Create table Inventaire
   caracteristique varchar2(250),
   stock           NUMBER       NOT NULL,
   prix            NUMBER       NOT NULL,
-  constraint inventaire_i1 check (stock >= 0),
-  constraint inventaire_i2 check (prix > 0)
+  constraint inventaire_c1 check (stock>=0),
+  constraint inventaire_c2 check (prix>0)
 );
 
 
@@ -199,7 +211,7 @@ Create table Cadre
 (
   idImpression NUMBER primary key,
   idProduit    NUMBER,
-  miseEnpage   varchar2(20),
+  miseEnpage   varchar2(20) NOT NULL,
   constraint fk_Cadre1 Foreign key (idImpression) references Impression (idImpression) on delete cascade,
   constraint fk_Cadre2 foreign key (idProduit) references CadreProduit (idProduit) on delete cascade
 );
@@ -250,14 +262,16 @@ Create table Tirage
   nbrExemplaire    NUMBER           NOT NULL,
   constraint fk_Tirage1 Foreign key (idImpression) references Impression (idImpression) on delete cascade,
   constraint fk_Tirage2 Foreign key (idProduit) references TirageProduit (idProduit) on delete cascade,
-  constraint tirage_c1 check (formatImpression in ('A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'))
+  constraint tirage_c1 check (formatImpression in ('A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9')),
+  constraint tirage_c2 check (nbrExemplaire>0)
 );
 
 Create table Admin
 (
   idAdmin NUMBER primary key,
   mail    varchar2(250) NOT NULL,
-  nom     varchar2(250) NOT NULL unique,
+  nom     varchar2(250) NOT NULL,
+  prenom  varchar2(250) NOT NULL,
   mdp     varchar2(250) NOT NULL
 );
 
@@ -304,20 +318,20 @@ Create table AdminCommande
   constraint fk_AdminCommande2 Foreign key (idCommande) references Commande (idCommande) on delete set null
 );
 
--- Une vue qui affiche les images et les photos utilisées par un client dans une impression --
 create view Client_Use_Image as
-select c.IDCLIENT, p.CHEMIN, p.IDPHOTO, pi.IDIMPRESSION
+select c.IDCLIENT, p.CHEMIN, p.IDPHOTO, pi.IDIMPRESSION, 'NON' AS "OWNER"
   from image i join photo p on i.CHEMIN = p.CHEMIN
   join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
   join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
   join CLIENT c on im.IDCLIENT = c.IDCLIENT
 where c.IDCLIENT <> i.IDCLIENT and i.PARTAGER = 1
 union
-select I.IDCLIENT,P.CHEMIN,p.idPhoto, pi.IDIMPRESSION
+select I.IDCLIENT,P.CHEMIN,p.idPhoto, pi.IDIMPRESSION, 'OUI' AS "OWNER"
   from CLIENT c join IMAGE i on c.IDCLIENT = i.IDCLIENT
   join PHOTO p on I.chemin = P.chemin
   join PHOTO_IMPRESSION pi on p.IDPHOTO = pi.IDPHOTO
   join IMPRESSION im on pi.IDIMPRESSION = im.IDIMPRESSION
                         and im.IDCLIENT = c.IDCLIENT;
+
 
 commit ;
