@@ -29,10 +29,10 @@ public class ClientHandler {
 	public static void addImage() {
 		
 
-		Client client = getUserInput();
+		Image image = getImageInput(5);
 
 		try {
-			client_queries.addClient(client);
+			client_queries.addImage(image);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
@@ -58,10 +58,7 @@ public class ClientHandler {
 	}
 
 	public static Client getUserInput() {
-		int id;
 		String nom, prenom, mail, mdp, telephone;
-
-		id = LectureClavier.lireEntier("Entrer id user: ");
 
 		System.out.println("Entrer nom user : ");
 		nom = LectureClavier.lireChaine();
@@ -78,7 +75,7 @@ public class ClientHandler {
 		System.out.println("Entrer téléphone user : ");
 		telephone = LectureClavier.lireChaine();
 
-		return new Client(id, mail, nom, prenom, mdp, telephone);
+		return new Client(mail, nom, prenom, mdp, telephone);
 	}
 	
 	public static Image getImageInput(int idClient) {
@@ -95,8 +92,7 @@ public class ClientHandler {
 
 		Date dateUtilisation = new Date();
 		
-		return new Image(chemin, idClient, resolution, partage, dateUtilisation);
-		
+		return new Image(chemin, idClient, resolution, partage, dateUtilisation,0);
 		
 	}
 }

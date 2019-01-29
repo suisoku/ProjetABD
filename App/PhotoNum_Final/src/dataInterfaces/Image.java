@@ -4,19 +4,34 @@ import java.util.Date;
 
 public class Image {
 	private String chemin;
-	private int idClient;
+	private int idClient , fileAttente;
 	private String resolution;
 	private boolean partager;
 	private Date dateUtilisation;
 
-	public Image(String chemin, int idClient, String resolution, boolean partage, Date dateUtilisation) {
+	public Image(String chemin, int idClient, String resolution, boolean partager, Date dateUtilisation, int fileAttente ) {
 		this.chemin = chemin;
 		this.idClient = idClient;
 		this.resolution = resolution;
-		this.partager = partage;
+		this.partager = partager;
 		this.dateUtilisation = dateUtilisation;
+		this.fileAttente = fileAttente;
 	}
 	
+	
+	
+	public int getFileAttente() {
+		return fileAttente;
+	}
+
+
+
+	public void setFileAttente(int fileAttente) {
+		this.fileAttente = fileAttente;
+	}
+
+
+
 	public String getChemin() {
 		return chemin;
 	}

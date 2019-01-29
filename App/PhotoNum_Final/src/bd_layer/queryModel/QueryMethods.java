@@ -10,10 +10,13 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import bd_layer.ConnectionBD;
 import bd_layer.ResQ;
 import bd_layer.Tuple;
+import dataInterfaces.Admin;
+import dataInterfaces.AdminHist;
 import dataInterfaces.Adresse;
 import dataInterfaces.Client;
 import dataInterfaces.CodePromo;
@@ -34,8 +37,15 @@ import dataInterfaces.TypeImpression;
  */
 public class QueryMethods {
 	
+
+  private final static Connection con = ConnectionBD.getConnection();
 	
-	private final static Connection con = ConnectionBD.getConnection();
+
+	public int getLastIndex(String table , String selector) throws SQLException {
+		ResQ array = ConnectionBD.getData(con, "select max("+selector+") from" + table);
+		int index = Integer.parseInt(array.get(0).get(0).toString()) +1;
+		return index;
+	}
 
 	public ProduitInventaire getProduitInventaire(int idProduit) throws SQLException {
 		ResQ array = ConnectionBD.getData(con, "select * from inventaire where idproduit="+idProduit +"");
@@ -52,17 +62,70 @@ public class QueryMethods {
 		}
 		return product;
 	}
-	
-	
+
 	public Client getClient(int clientId) throws SQLException {
 		ResQ array = ConnectionBD.getData(con, "select * from client where idclient="+clientId +"");
 		Client c = null;
 		for(ArrayList<Object> row : array) {
 				c = new Client(Integer.parseInt(row.get(0).toString()) , row.get(1).toString() , row.get(2).toString() , 
-						row.get(3).toString() , row.get(4).toString(), row.get(5).toString(),
+						row.get(3).toString() , row.get(4).toString(), row.get(5).toString(), 
+						row.get(6).toString() == "1" ? true : false,
 						getClientAdresses(clientId),
 						getClientPromos(clientId));
 		}
+		return c;
+	}
+	
+	public Admin getAdmin(int idAdmin) throws SQLException {
+		ResQ array = ConnectionBD.getData(con, "select * from admin where idadmin="+idAdmin +"");
+		Admin c = null;
+		for(ArrayList<Object> row : array) {
+				c = new Admin(
+						Integer.parseInt(row.get(0).toString()), 
+						row.get(1).toString(), 
+						row.get(2).toString(), 
+						row.get(3).toString(), 
+						row.get(4).toString()); 
+		}
+		ResQ adCl = ConnectionBD.getData(con, "select * from adminclient where idadmin="+idAdmin+"");
+		
+		c.setAdmin_client(  (ArrayList<AdminHist>) (adCl.stream().map(s -> new AdminHist(
+							Integer.parseInt(s.get(0).toString()),
+			   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+							(Date)s.get(2))
+							).collect(Collectors.toList())
+				));
+		
+		ResQ adCl2 = ConnectionBD.getData(con, "select * from admincommande where idadmin="+idAdmin+"");
+		
+		c.setAdmin_commande(  (ArrayList<AdminHist>) (adCl2.stream().map(s -> new AdminHist(
+				Integer.parseInt(s.get(0).toString()),
+   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+				(Date)s.get(2))
+				).collect(Collectors.toList())	
+		));
+		
+		ResQ adCl3 = ConnectionBD.getData(con, "select * from admininventaire where idadmin="+idAdmin+"");
+		
+		c.setAdmin_inventaire(  (ArrayList<AdminHist>) (adCl3.stream().map(s -> new AdminHist(
+				Integer.parseInt(s.get(0).toString()),
+   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+				(Date)s.get(2))
+				).collect(Collectors.toList())	
+		));
+		
+		ResQ adCl4 = ConnectionBD.getData(con, "select * from adminimage where idadmin="+idAdmin+"");
+		
+		c.setAdmin_image(  (ArrayList<AdminHist>) (adCl4.stream().map(s -> new AdminHist(
+				Integer.parseInt(s.get(0).toString()),
+   			    s.get(1) instanceof String ? s.get(1).toString():Integer.parseInt(s.get(0).toString()),
+				(Date)s.get(2))
+				).collect(Collectors.toList())	
+		));
+		
+
+		// 2Darraylist --map-> Stream<<AdminHist>> -Collector.toList-> cast ArrayList<AdminHist>->> ajout dans objet Admin 
+
 		return c;
 	}
 	
@@ -71,7 +134,8 @@ public class QueryMethods {
 		ArrayList<Adresse> adressList = new ArrayList<Adresse>();
 		
 		for(ArrayList<Object> row : array) {
-			adressList.add(new Adresse(Integer.parseInt(row.get(0).toString()), row.get(1).toString() , row.get(2).toString()));
+			adressList.add(new Adresse(Integer.parseInt(row.get(0).toString()),
+							Integer.parseInt(row.get(1).toString()), row.get(2).toString() , row.get(3).toString()));
 		}
 		return adressList;
 	}
@@ -81,9 +145,9 @@ public class QueryMethods {
 		ArrayList<CodePromo> codeList = new ArrayList<CodePromo>();
 		
 		for(ArrayList<Object> row : array) {
-			codeList.add(new CodePromo(Integer.parseInt(row.get(0).toString()), 
-					Float.parseFloat(row.get(1).toString()) , Integer.parseInt(row.get(2).toString()),
-					Integer.parseInt(row.get(3).toString()) ));
+			codeList.add(new CodePromo(Integer.parseInt(row.get(0).toString()), Integer.parseInt(row.get(1).toString()),
+					Float.parseFloat(row.get(2).toString()) , Integer.parseInt(row.get(3).toString()),
+					Integer.parseInt(row.get(4).toString()) ));
 		}
 		return codeList;
 	}
@@ -96,13 +160,14 @@ public class QueryMethods {
 			codeList.add(new Commande(
 					Integer.parseInt(row.get(0).toString()), 
 					Integer.parseInt(row.get(1).toString()), 
-					(Date)row.get(2),
-					Float.parseFloat(row.get(3).toString()),
-					Integer.parseInt(row.get(4).toString()),
-					row.get(5).toString(),
+					Integer.parseInt(row.get(2).toString()), 
+					(Date)row.get(3),
+					Float.parseFloat(row.get(4).toString()),
+					Integer.parseInt(row.get(5).toString()),
 					row.get(6).toString(),
 					row.get(7).toString(),
-					getCommmandeImpression(Integer.parseInt(row.get(0).toString()) )
+					row.get(8).toString(),
+					getCommmandeImpression(Integer.parseInt(row.get(9).toString()) )
 			));
 		}
 		return codeList;
@@ -224,8 +289,9 @@ public class QueryMethods {
 					row.get(0).toString(), 
 					Integer.parseInt(row.get(1).toString()),
 					row.get(2).toString(),
-					Boolean.parseBoolean(row.get(3).toString()),
-					(Date)row.get(4)
+					row.get(3).toString()  == "1" ? true : false,
+					(Date)row.get(4),
+					Integer.parseInt(row.get(5).toString())
 				);
 		}
 		return codeList;
@@ -240,17 +306,16 @@ public class QueryMethods {
 	public void addClient(Client client) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		
-		values.add(client.getIdClient()+"");
+		values.add(getLastIndex("client", "idclient")+"");
 		values.add(client.getMail());
 		values.add(client.getNom());
 		values.add(client.getPrenom());
 		values.add(client.getMdp());
 		values.add(client.getTelephone());
+		values.add(client.getActif() == true ? "1":"0");
 		
 		ConnectionBD.addData(con, "client", values);
 	}
-	
-	
 	
 	public void deleteClient(int idClient) throws SQLException {
 		ArrayList<Tuple> cond = new ArrayList<Tuple>();
@@ -269,6 +334,8 @@ public class QueryMethods {
 		values.add(image.isPartager() ? "1" : "0");
 		
 		String dateS = new SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
+		
+		//System.out.println(dateS);
 		values.add(dateS);
 		
 		ConnectionBD.addData(con, "image", values);
@@ -285,7 +352,7 @@ public class QueryMethods {
 	public void addPhoto(Photo photo) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		
-		values.add(photo.getIdPhoto()+ "");
+		values.add(getLastIndex("photo", "idphoto")+ "");
 		values.add(photo.getChemin() );
 		values.add(photo.getCommentaire());
 		values.add(photo.getTypeRetouche());
@@ -298,7 +365,7 @@ public class QueryMethods {
 		ArrayList<String> values = new ArrayList<String>();
 		TypeImpression ti = impression.getTypeImpression();
 		
-		values.add(impression.getIdImpression() + "");
+		values.add(getLastIndex("impression", "idimpression") + "");
 		values.add(impression.getIdClient() + "");
 		values.add(impression.getNom());
 		values.add(ti.type.name());
@@ -347,7 +414,7 @@ public class QueryMethods {
 	public void addCommande(Commande c) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		
-		values.add(c.getIdCmd() + "");
+		values.add(getLastIndex("commande", "idcommande") + "");
 		values.add(c.getIdClient() + "");
 		String dateS = new SimpleDateFormat("dd-MMM-yy").format(c.getDatePaiement());
 		values.add(dateS);
@@ -363,6 +430,7 @@ public class QueryMethods {
 	public void addAdresse(Adresse s) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		
+		values.add(getLastIndex("adresse", "idadresse")+"");
 		values.add(s.getIdClient()+"");
 		values.add(s.getNomAdresse());
 		values.add(s.getAdresse());
@@ -373,6 +441,7 @@ public class QueryMethods {
 	public void addCodePromo(CodePromo cp) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		
+		values.add(getLastIndex("codepromo", "idcode") +"");
 		values.add(cp.getCode()+"");
 		values.add(cp.getReduction()+"");
 		values.add(cp.isUsed() ? "1" : "0" );
@@ -430,6 +499,7 @@ public class QueryMethods {
 		ConnectionBD.deleteData(con, "codepromo", cond);
 	}
 	
+	
 	/** UPDATE PART ----------------------------------------**/
 	
 	
@@ -438,5 +508,48 @@ public class QueryMethods {
 		conds.add(new Tuple("idclient" , idClient + ""));
 		
 		ConnectionBD.updateData(con, "client", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	public void updateInventaire(int idProduit ,Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idProduit" , idProduit + ""));
+		ConnectionBD.updateData(con, "inventaire", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	public void updateCommandeImpression(int idCommande , int idImpression ,Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idCommande" , idCommande + ""));
+		conds.add(new Tuple("idImpression" , idImpression + ""));
+		ConnectionBD.updateData(con, "commande_impression", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	public void updateImage(String chemin, Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("chemin" , chemin + ""));
+		ConnectionBD.updateData(con, "image", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	// update commande
+	
+	public void updateCommande(int idCommande, Tuple...values) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idcommande" , idCommande + ""));
+		ConnectionBD.updateData(con, "commande", conds, new ArrayList<Tuple>(Arrays.asList(values)));
+	}
+	
+	
+	
+	/** -------      MISC PART -----------**/
+	public float prixImpression(Impression im) throws SQLException {
+		
+		int idproduit = (int) im.getTypeImpression().attributes.get("IDPRODUIT");
+		ProduitInventaire pi = getProduitInventaire(idproduit);
+		return pi.getPrix();
+	}
+	
+	public ArrayList<Tuple> getStatImages() throws SQLException {
+		ResQ a = ConnectionBD.getData(con,
+				"select chemin, count(idimpression) as coutImp from CLIENT_USE_IMAGE group by chemin order by coutImp desc");
+		return (ArrayList<Tuple>) a.stream().map(s -> new Tuple(s.get(0).toString() , s.get(1).toString())).collect(Collectors.toList());
 	}
 }

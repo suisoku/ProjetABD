@@ -3,24 +3,25 @@ package dataInterfaces;
 import java.util.ArrayList;
 
 public class Client {
-
+	
 	private int idClient;
 	private String nom, prenom, mail, telephone, mdp;
+	private boolean actif;
 	private ArrayList<Adresse> adressList;
 	private ArrayList<CodePromo> codeList;
 	
-	public Client(int id, String mail, String nom, String prenom, String mdp, String telephone) {
-		this.setIdClient(id);
+	public Client (String mail, String nom, String prenom, String mdp, String telephone) {
 		this.setNom(nom);
 		this.setPrenom(prenom);
 		this.setMail(mail);
 		this.setTelephone(telephone);
 		this.setMdp(mdp);
+		this.actif = true;
+		
 	}
-
-
-	public Client(int id, String mail, String nom, String prenom, String mdp, String telephone,
-			ArrayList<Adresse> adressList, ArrayList<CodePromo> codeList) {
+	
+	public Client (int id, String mail, String nom, String prenom, String mdp, String telephone, boolean actif,
+			ArrayList<Adresse> adressList ,  ArrayList<CodePromo> codeList) {
 		this.setIdClient(id);
 		this.setNom(nom);
 		this.setPrenom(prenom);
@@ -29,11 +30,13 @@ public class Client {
 		this.setMdp(mdp);
 		this.adressList = adressList;
 		this.codeList = codeList;
+		this.actif = actif;
+		
 	}
-
+	
 	/******* Getters and Setters **********/
 	/**************************************/
-
+	
 	public int getIdClient() {
 		return idClient;
 	}
@@ -98,4 +101,13 @@ public class Client {
 		this.codeList = codeList;
 	}
 
+	public boolean getActif() {
+		return actif;
+	}
+
+	public void setActif(boolean actif) {
+		this.actif = actif;
+	}
+	
+	
 }
