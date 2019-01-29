@@ -8,6 +8,16 @@ public class Client {
 	private String nom, prenom, mail, telephone, mdp;
 	private ArrayList<Adresse> adressList;
 	private ArrayList<CodePromo> codeList;
+	
+	public Client(int id, String mail, String nom, String prenom, String mdp, String telephone) {
+		this.setIdClient(id);
+		this.setNom(nom);
+		this.setPrenom(prenom);
+		this.setMail(mail);
+		this.setTelephone(telephone);
+		this.setMdp(mdp);
+	}
+
 
 	public Client(int id, String mail, String nom, String prenom, String mdp, String telephone,
 			ArrayList<Adresse> adressList, ArrayList<CodePromo> codeList) {
@@ -19,7 +29,6 @@ public class Client {
 		this.setMdp(mdp);
 		this.adressList = adressList;
 		this.codeList = codeList;
-
 	}
 
 	/******* Getters and Setters **********/

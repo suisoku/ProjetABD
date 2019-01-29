@@ -1,6 +1,11 @@
 package navigation_handlers;
 
+import bd_layer.queryModel.QueryMethods;
+
 public class ImageHandler {
+	
+	private static QueryMethods image_queries = new QueryMethods();
+
 
 	public static void delete() {
 		System.out.println("Opération de suppresion réussie");

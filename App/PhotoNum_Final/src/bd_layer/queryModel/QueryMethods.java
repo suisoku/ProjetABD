@@ -7,7 +7,6 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -225,7 +224,7 @@ public class QueryMethods {
 					row.get(0).toString(), 
 					Integer.parseInt(row.get(1).toString()),
 					row.get(2).toString(),
-					Integer.parseInt(row.get(3).toString()),
+					Boolean.parseBoolean(row.get(3).toString()),
 					(Date)row.get(4)
 				);
 		}
@@ -270,8 +269,6 @@ public class QueryMethods {
 		values.add(image.isPartager() ? "1" : "0");
 		
 		String dateS = new SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
-		
-		//System.out.println(dateS);
 		values.add(dateS);
 		
 		ConnectionBD.addData(con, "image", values);
