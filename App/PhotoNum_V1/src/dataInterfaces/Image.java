@@ -6,19 +6,34 @@ import enums.Resolution;
 
 public class Image {
 	private String chemin;
-	private int idClient;
+	private int idClient , fileAttente;
 	private String resolution;
 	private boolean partager;
 	private Date dateUtilisation;
 
-	public Image(String chemin, int idClient, String resolution, int partager, Date dateUtilisation) {
+	public Image(String chemin, int idClient, String resolution, int partager, Date dateUtilisation, int fileAttente ) {
 		this.chemin = chemin;
 		this.idClient = idClient;
 		this.resolution = resolution;
 		this.partager = (partager == 1) ? true : false;
 		this.dateUtilisation = dateUtilisation;
+		this.fileAttente = fileAttente;
 	}
 	
+	
+	
+	public int getFileAttente() {
+		return fileAttente;
+	}
+
+
+
+	public void setFileAttente(int fileAttente) {
+		this.fileAttente = fileAttente;
+	}
+
+
+
 	public String getChemin() {
 		return chemin;
 	}
