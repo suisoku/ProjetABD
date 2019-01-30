@@ -49,7 +49,8 @@ end;
       auto_drop => false,
       comments => 'image(s) deleted');
 END;
-/*/
+/
+*/
 
 -- Trigger which updates Image Date when ever the image is used in photo_Impression --
 CREATE or Replace trigger updateImageTable
@@ -73,7 +74,8 @@ begin
   set dateUtilisation = sysdate
   where chemin = CHEMIN;
 end;
-/*/
+/
+*/
 
 
 -- Trigger Une commande n'est possible que si le support d'impression est en stock
