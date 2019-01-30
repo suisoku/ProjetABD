@@ -50,7 +50,7 @@ public class ConnexionHandler {
 			System.out.println("Saisir votre adresse mot de passe : ");
 			String mdp = LectureClavier.lireChaine();
 			try {
-				int result = landing_queries.authentification("client", mail, mdp);
+				int result = landing_queries.authentification("admin", mail, mdp);
 				if (result != 0)
 					AdminMenuHandler.start();
 				else

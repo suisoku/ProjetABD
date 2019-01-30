@@ -10,6 +10,11 @@ public class Client {
 	private ArrayList<Adresse> adressList;
 	private ArrayList<CodePromo> codeList;
 	
+	public Client (int id, String mail) {
+		this.setIdClient(id);
+		this.setMail(mail);
+	}
+	
 	public Client (String mail, String nom, String prenom, String mdp, String telephone) {
 		this.setNom(nom);
 		this.setPrenom(prenom);

@@ -12,7 +12,7 @@ public class AdminMenuHandler {
 		});
 		
 		interactionTypeChoice.addMenuItem("1", "Supprimer utilisateur", () -> {
-			ImpressionHandler.delete();
+			ClientHandler.deleteUser();
 		});
 		
 		interactionTypeChoice.addMenuItem("2", "Changer statut image", () -> {

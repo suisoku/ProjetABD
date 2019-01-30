@@ -18,7 +18,8 @@ public class ClientMenuHandler {
 		map.put("Créer une impression", ClientHandler::createImpression);
 		map.put("Modifier/Supprimer une impression", ClientHandler::updateImpression);
 		map.put("Modifier/supprimer une photo", ClientHandler::updatePhoto);
-		map.put("Supprimer une image", ClientHandler::delete);
+		map.put("Modifer une image", ClientHandler::changeImageStatus);
+		map.put("Supprimer une image", ClientHandler::deleteImage);
 		map.put("Voir les statistiques sur les images", ImageHandler::getStats);
 		map.put("Consulter mes informations", ClientHandler::showDetails);
 		map.put("Saisir une commande", ClientHandler::createCommand);
