@@ -1,9 +1,9 @@
 -- Insertion Clients --
 insert into client values (1, 'aduddle0@blogs.com', 'CHOUKCHOU', 'Zak', 'Sélène', '6775870746', '1');
 insert into client values (2, 'jgalsworthy1@wikia.com', 'ZIANI', 'Nour', 'Mélodie', '4364464966', '1');
-insert into client values (3, 'lbaddow2@si.edu', 'ROBINEAU', 'Régis', 'Thérèse', '5079599510', '0');
-insert into client values (4, 'ecrampton3@ftc.gov', 'FONTAINE', 'Yves', 'Aimée', '9762880707', '0');
-insert into client values (5, 'gommundsen4@multiply.com', 'AIDARA', 'Sidson', 'Örjan', '8153318948', '0');
+insert into client values (3, 'lbaddow2@si.edu', 'ROUBINEAU', 'Régis', 'Thérèse', '5079599510', '1');
+insert into client values (4, 'ecrampton3@ftc.gov', 'FONTAINE', 'Yves', 'Aimée', '9762880707', '1');
+insert into client values (5, 'gommundsen4@multiply.com', 'AIDARA', 'Sidson', 'Örjan', '8153318948', '1');
 -- Insertion Address --
 
 insert into Adresse values (1,1,'zakAddress','Madrid');
@@ -25,7 +25,7 @@ insert into CodePromo values (5,'fgh',0.20,'1',5);
 
 
 insert into Commande values (1,1,1,'20-JAN-2019',69,0,'Oui','EnCoursPreparation','PointRelais');
-insert into Commande values (2,2,2,'19-JAN-2019',70,0,'Oui','EnCoursLivraison','Domicile');
+insert into Commande values (2,2,2,'19-JAN-2019',70,0,'Oui','EnCoursPreparation','Domicile');
 insert into Commande values (3,3,3,'18-JAN-2019',75,0,'Oui','EnCoursPreparation','PointRelais');
 insert into Commande values (4,4,4,'17-JAN-2019',85,0,'Oui','EnCoursPreparation','Domicile');
 insert into Commande values (5,5,5,'16-JAN-2019',90,0,'Oui','EnCoursPreparation','PointRelais');
@@ -66,18 +66,20 @@ insert into Impression values (5,5,'sidsonImpression','album');
 
 -- Insertion Inventaire --
 
-insert into Inventaire values (1,'AH-0V','good',0,200);
+insert into Inventaire values (1,'AH-0V','good',0,10);
 update INVENTAIRE
 set STOCK = 20
 where IDPRODUIT = 1;
-insert into Inventaire values (2,'ML-69','Awsome',10,400);
+insert into Inventaire values (2,'ML-69','Awsome',10,15);
 update INVENTAIRE
 set STOCK = 30
 where IDPRODUIT = 2;
-insert into Inventaire values (3,'M2','good',30,300);
-insert into Inventaire values (4,'R32','Yeaaah',50,380);
-insert into Inventaire values (5,'RS3','baad',2,200);
-
+insert into Inventaire values (3,'M2','good',30,30);
+insert into Inventaire values (4,'R32','Yeaaah',50,25);
+insert into Inventaire values (5,'RS3','baad',2,20);
+update INVENTAIRE
+set STOCK = 50
+where IDPRODUIT = 5;
 
 -- Insertion CadreProduit --
 
@@ -186,36 +188,3 @@ insert into AdminCommande values (2,2,'15-JAN-19');
 insert into AdminCommande values (3,3,'16-JAN-19');
 insert into AdminCommande values (4,4,'17-JAN-19');
 insert into AdminCommande values (5,5,'18-JAN-19');
-
-
-commit ;
-
-call dbms_scheduler.run_job('deleteNoUsedImagesJob');
-
-select * from CLIENT;
-select * from ADRESSE;
-select * from CODEPROMO;
-select * from COMMANDE;
-select * from IMAGE;
-select * from PHOTO;
-select * from IMPRESSION;
-select * from COMMANDE_IMPRESSION;
-select * from PHOTO_IMPRESSION;
-select * from PHOTO_TIRAGE_IMPRESSION;
-select * from INVENTAIRE;
-select * from CADREPRODUIT;
-select * from CALENDRIERPRODUIT;
-select * from AGENDAPRODUIT;
-select * from ALBUMPRODUIT;
-select * from TIRAGEPRODUIT;
-select * from CADRE;
-select * from CALENDRIER;
-select * from AGENDA;
-select * from ALBUM;
-select * from TIRAGE;
-select * from ADMIN;
-select * from ADMINCLIENT;
-select * from ADMININVENTAIRE;
-select * from ADMINIMAGE;
-select * from ADMINCOMMANDE;
-select * from client_use_image;
