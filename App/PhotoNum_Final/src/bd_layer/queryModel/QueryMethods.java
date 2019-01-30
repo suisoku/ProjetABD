@@ -283,7 +283,7 @@ public class QueryMethods {
 							row.get(2).toString(), getPhotoImpression(Integer.parseInt(row.get(0).toString()))));
 			codeList.get(codeList.size() - 1).setTypeImpression(
 					getTypeImpression(Integer.parseInt(row.get(0).toString()), row.get(3).toString()));
-			;
+			
 		}
 		return codeList;
 	}
@@ -300,10 +300,6 @@ public class QueryMethods {
 		return codeList;
 	}
 
-	/** Je veux affiche le tarif du produit NOT_DONE **/
-	public ResQ getProductPrice() {
-		return null;
-	}
 
 	public void addClient(Client client) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
@@ -337,8 +333,11 @@ public class QueryMethods {
 
 		String dateS = new SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation()).toUpperCase();
 
-		System.out.println(dateS);
+		//System.out.println(dateS);
+
 		values.add(dateS);
+		
+		values.add(image.getFileAttente() + "");
 
 		values.add(image.getFileAttente() + "");
 
@@ -418,11 +417,13 @@ public class QueryMethods {
 		ConnectionBD.addData(con, "commande_impression", values);
 	}
 
-	public void addCommande(Commande c) throws SQLException {
+	public int addCommande(Commande c) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
-
-		values.add(getLastIndex("commande", "idcommande") + "");
+		int newindex = getLastIndex("commande", "idcommande");
+		
+		values.add(newindex + "");
 		values.add(c.getIdClient() + "");
+		values.add(c.getIdAdresse() +"");
 		String dateS = new SimpleDateFormat("dd-MMM-yy").format(c.getDatePaiement());
 		values.add(dateS);
 		values.add(c.getMontant() + "");
@@ -432,6 +433,8 @@ public class QueryMethods {
 		values.add(c.getModeLivraison());
 
 		ConnectionBD.addData(con, "commande", values);
+		
+		return newindex;
 	}
 
 	public void addAdresse(Adresse s) throws SQLException {
@@ -523,10 +526,10 @@ public class QueryMethods {
 	/** ------- MISC PART ----------- **/
 	public float prixImpression(Impression im) throws SQLException {
 
-		int idproduit = (int) im.getTypeImpression().attributes.get("IDPRODUIT");
+		int idproduit = Integer.parseInt(im.getTypeImpression().attributes.get("IDPRODUIT") + "" );
 		ProduitInventaire pi = getProduitInventaire(idproduit);
 		return pi.getPrix();
-	}
+	}	
 
 	public ArrayList<Tuple> getStatImages() throws SQLException {
 		ResQ a = ConnectionBD.getData(con,

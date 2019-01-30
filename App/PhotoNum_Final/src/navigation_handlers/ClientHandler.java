@@ -4,12 +4,18 @@ import java.util.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import java.util.Date;
+import java.util.concurrent.atomic.AtomicReference;
+
+
 import application.LectureClavier;
 import bd_layer.Tuple;
 import bd_layer.queryModel.QueryMethods;
 import dataInterfaces.Adresse;
 import dataInterfaces.Client;
 import dataInterfaces.CodePromo;
+import dataInterfaces.Commande;
+import dataInterfaces.CommandeImpression;
 import dataInterfaces.Image;
 import dataInterfaces.Photo;
 import navigation_handlers.core.GenericMenu;
@@ -80,7 +86,7 @@ public class ClientHandler {
 	}
 
 	public static void updatePhoto() {
-		System.out.println("Opération de mise à jour réussie");
+		System.out.println("OpÃ©ration de mise Ã  jour rÃ©ussie");
 	}
 
 	public static void createImpression() {
@@ -113,6 +119,85 @@ public class ClientHandler {
 	}
 
 	public static void createCommand() {
+		GenericMenu menuImpression = new GenericMenu();
+		GenericMenu menuAdresse = new GenericMenu();
+		Client c = ConnexionHandler.userClient;
+		ArrayList<CommandeImpression> commImps = new ArrayList<CommandeImpression>();
+		AtomicReference<Adresse> adresse = new AtomicReference<Adresse>();
+		
+		// step one choose the inmpressions that you want to put in the command + the quantities
+		try {client_queries.getClientImpression(c.getIdClient()).
+			forEach(e -> menuImpression.addMenuItem(
+					e.getIdImpression() + "", 
+					e.getTypeImpression().type.name()+" : "+e.getNom(), 
+					()->{
+						int q = LectureClavier.lireEntier("Quantite Impression:");
+						commImps.add(new CommandeImpression(e,q));
+					}
+			));} 
+		catch (NumberFormatException | SQLException e) {e.printStackTrace();}
+
+		System.out.println("Choisissez les impressions a commander [pour finir taper F]");
+
+		menuImpression.initMenu(false);
+		
+		// then demand the adress
+		System.out.println("Choisissez l'adresse de livraison");
+		
+			c.getAdressList().forEach(e -> menuAdresse.addMenuItem(
+					e.getIdAdresse()+"",
+					e.getAdresse(),
+					()->{adresse.set(e);}
+			));
+			
+			menuAdresse.initMenu(false);
+			
+		//  calculate the price  ( we need a method but put something arbitrary
+			float price =  0;
+			
+			System.out.println("Recapitulatif des impressions commandes" + System.lineSeparator());
+			for(CommandeImpression ci : commImps) {
+				float subprice = 0;
+				
+				try{subprice = client_queries.prixImpression(ci.impression);}
+				catch (SQLException e) {e.printStackTrace();}
+			
+				System.out.println("Commande :" + ci.impression.getNom() + " P :" + subprice + " P x Q :" + subprice*ci.quantite);
+				
+				price += subprice*ci.quantite;
+			}
+			
+			System.out.println(System.lineSeparator() + "Prix total commande : " + price);
+			
+			// press Validate to validate
+			System.out.println(System.lineSeparator() + "Tapez V pour valider ou A pour aborter");
+			String validation = LectureClavier.lireChaine();
+			validation.toLowerCase();
+			if(validation.equals("v")) {
+				int newindex;
+				Commande com = new Commande(
+						0, 
+						c.getIdClient(), 
+						adresse.get().getIdAdresse(), 
+						new Date(), 
+						price, 
+						0, 
+						"non", 
+						"EnCoursPreparation", 
+						"Domicile", commImps);
+				
+				try { 
+					newindex = client_queries.addCommande(com);  
+					for(CommandeImpression ci : commImps) {client_queries.addCommandeImpression(newindex, ci);}
+				}
+				catch (SQLException e1) {e1.printStackTrace();}
+				
+				System.out.println(System.lineSeparator()+ "Commande envoyee avec statut EnCoursDePreparation");
+			}
+			else {
+				System.out.println("Commande ANNNULE");
+			}
+			
 	}
 
 	public static void addImage() {
@@ -240,7 +325,7 @@ public class ClientHandler {
 		System.out.println("Entrer nom user : ");
 		nom = LectureClavier.lireChaine();
 
-		System.out.println("Entrer prénom user : ");
+		System.out.println("Entrer prÃ©nom user : ");
 		prenom = LectureClavier.lireChaine();
 
 		System.out.println("Entrer mail user : ");
@@ -249,7 +334,7 @@ public class ClientHandler {
 		System.out.println("Entrer mdp user : ");
 		mdp = LectureClavier.lireChaine();
 
-		System.out.println("Entrer téléphone user : ");
+		System.out.println("Entrer tÃ©lÃ©phone user : ");
 		telephone = LectureClavier.lireChaine();
 
 		return new Client(mail, nom, prenom, mdp, telephone);
@@ -260,10 +345,10 @@ public class ClientHandler {
 		System.out.println("Entrer le chemin de l'image : ");
 		String chemin = LectureClavier.lireChaine();
 
-		System.out.println("Entrer la résolution de l'image : ");
+		System.out.println("Entrer la rÃ©solution de l'image : ");
 		String resolution = LectureClavier.lireChaine();
 
-		boolean partage = LectureClavier.lireOuiNon("Image partagée(o : Oui/ n: Non): ");
+		boolean partage = LectureClavier.lireOuiNon("Image partagÃ©e(o : Oui/ n: Non): ");
 
 		Date dateUtilisation = new Date();
 
