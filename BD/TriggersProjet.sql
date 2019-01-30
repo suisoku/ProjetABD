@@ -6,6 +6,7 @@ drop trigger trigger_delete_commande;
 drop trigger trigger_insert_impression;
 drop trigger trigger_Desactivation_Client
 drop trigger trigger_ImageUsed;
+drop trigger trigger_file_attenteImage;
 
 
 
@@ -139,19 +140,28 @@ CREATE  or replace trigger trigger_Desactivation_Client
 after update of actif on client
 for each row
 declare
-  nbCommandeNonLivrer int;
+  imp int;
+  nbImagePartager int;
 begin
 
-  if :old.actif = '1' then
+  if :old.actif = '1' and :new.actif='0' then
 
-      select nvl(count (idCommande),0) into nbCommandeNonLivrer
-      from commande
-      where idClient = :new.idClient and statut not in ('Livre', 'Annule');
+      select nvl(count(chemin),0) into nbImagePartager
+      from IMAGE
+      where IDCLIENT=:new.idClient and partager='1';
 
-      if nbCommandeNonLivrer != 0 then
-        raise_application_error(-20110,'Le client ne peut etre desactive tant qu il a encore des commandes en cours');
+      if nbImagePartager > 0 then
+          select nvl(count(i.CHEMIN),0) into imp
+          from image i join PHOTO p on i.chemin=p.CHEMIN join photo_impression pi on p.IDPHOTO=pi.IDPHOTO join impression im on pi.IDIMPRESSION=im.IDIMPRESSION
+          where i.idClient=:new.idClient and i.partager='1' and im.idClient !=:new.idClient;
+
+          if imp = 0 then
+            update image set partager = '0' where IDCLIENT= :new.idClient;
+          else
+            update image set fileAttente='1' where IDCLIENT= :new.idClient;
+          end if;
+
       end if;
-
   end if;
 end;
 /
@@ -221,3 +231,48 @@ begin
 end;
 /
 
+create or replace trigger trigger_file_attenteImage
+after update of statut on commande
+declare
+  Cursor c1 is
+    select i.chemin, i.fileAttente
+    from COMMANDE_IMPRESSION ci join PHOTO_IMPRESSION pi on ci.IDIMPRESSION=pi.IDIMPRESSION
+      join PHOTO p on p.IDPHOTO=pi.IDPHOTO join IMAGE I on p.CHEMIN = I.CHEMIN
+    where ci.IDCOMMANDE=:new.idCommande and i.fileAttente!='0';
+
+  nbCommandeAPrep int;
+  unTuple c1%rowtype;
+begin
+
+  open c1;
+  if :new.statut!='EnCoursPreparation' and :old.statut='EnCoursPreparation' then
+
+    fetch c1 into unTuple;
+
+    while(c1%found) loop
+
+
+      select nvl(count(c.idCommande),0) into nbCommandeAPrep
+      from COMMANDE c join COMMANDE_IMPRESSION ci on c.IDCOMMANDE=ci.IDCOMMANDE join PHOTO_IMPRESSION pi on ci.IDIMPRESSION=pi.IDIMPRESSION
+        join PHOTO p on p.IDPHOTO=pi.IDPHOTO join IMAGE I on p.CHEMIN = I.CHEMIN
+      where c.IDCOMMANDE!=:new.idCommande and c.statut='EncoursPreparation' and i.chemin=unTuple.chemin;
+
+
+      if nbCommandeAPrep = 0 then
+
+
+        if unTuple.fileAttente = '1' then
+          update IMAGE set FILEATTENTE='0' where chemin=unTuple.chemin;
+          update IMAGE set partager='0' where chemin=unTuple.chemin;
+        end if;
+
+      end if;
+    fetch c1 into unTuple;
+    end loop;
+
+  end if;
+
+  close c1;
+
+end;
+/
