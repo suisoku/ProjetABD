@@ -22,7 +22,7 @@ public class ConnexionHandler {
 			System.out.println("Saisir votre adresse mail : ");
 			String mail = LectureClavier.lireChaine();
 
-			System.out.println("Saisir votre adresse mot de passe : ");
+			System.out.println("Saisir votre mot de passe : ");
 			String mdp = LectureClavier.lireChaine();
 			try {
 				idUser = landing_queries.authentification("client", mail, mdp);

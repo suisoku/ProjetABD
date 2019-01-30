@@ -149,7 +149,7 @@ public class QueryMethods {
 		ArrayList<CodePromo> codeList = new ArrayList<CodePromo>();
 
 		for (ArrayList<Object> row : array) {
-			codeList.add(new CodePromo(Integer.parseInt(row.get(0).toString()), Integer.parseInt(row.get(1).toString()),
+			codeList.add(new CodePromo(Integer.parseInt(row.get(0).toString()), row.get(1).toString(),
 					Float.parseFloat(row.get(2).toString()), Integer.parseInt(row.get(3).toString()),
 					Integer.parseInt(row.get(4).toString())));
 		}
@@ -429,19 +429,7 @@ public class QueryMethods {
 		ConnectionBD.addData(con, "adresse", values);
 	}
 
-	public void addCodePromo(CodePromo cp) throws SQLException {
-		ArrayList<String> values = new ArrayList<String>();
 
-		values.add(getLastIndex("codepromo", "idcode") + "");
-		values.add(cp.getCode() + "");
-		values.add(cp.getReduction() + "");
-		values.add(cp.isUsed() ? "1" : "0");
-		values.add(cp.getIdClient() + "");
-
-		ConnectionBD.addData(con, "codepromo", values);
-	}
-
-	/** DELETE STUFF -------------------------------- **/
 
 	/** DELETE STUFF -------------------------------- **/
 

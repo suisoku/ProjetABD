@@ -17,14 +17,14 @@ public class TestQuery1 {
 			System.out.println(c.getNom() +" | "+  c.getPrenom() +" | "+ c.getTelephone() +" | ");
 			
 			for(Adresse a : c.getAdressList()) {
-				System.out.println(a.getNomAdresse() +" | "+ a.getAdresse()) ;
+				System.out.println(a.getNomAdresse() +" | "+ a.getAdresse()) ; 
 			}
 			for(CodePromo cp : c.getCodeList()) {
 				System.out.println(cp.getCode() +" | "+ cp.getReduction()  +" | "+ cp.isUsed());
 			}
 		System.out.println("------------------------------");
 		
-		
+	/**	
 		System.out.println("--------TEST Commande------------");
 			Commande cm = cq.getClientCommande(4).get(0);
 			
@@ -52,6 +52,6 @@ public class TestQuery1 {
 		  
 		System.out.println("------------------------------");
 			
-		
+		**/
 	}
 }

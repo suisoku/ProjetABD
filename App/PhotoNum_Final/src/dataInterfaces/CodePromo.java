@@ -1,11 +1,12 @@
 package dataInterfaces;
 
 public class CodePromo {
-	private int  idcode, code, idClient;
+	private int  idcode, idClient;
 	private float reduction;
 	private boolean used;
+	private String code;
 	
-	public CodePromo(int idcode, int code, float reduction, int usedB , int idClient) {
+	public CodePromo(int idcode, String code, float reduction, int usedB , int idClient) {
 		this.code = code;
 		this.reduction = reduction;
 		this.idClient = idClient;
@@ -18,7 +19,7 @@ public class CodePromo {
 	/**************************************/
 	
 	
-	public int getCode() {
+	public String getCode() {
 		return code;
 	}
 
@@ -32,7 +33,7 @@ public class CodePromo {
 	}
 
 
-	public void setCode(int code) {
+	public void setCode(String code) {
 		this.code = code;
 	}
 

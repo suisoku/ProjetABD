@@ -167,16 +167,19 @@ public class ClientHandler {
 	public static void showDetails() {
 		try {
 			Client client = client_queries.getClient(ConnexionHandler.idUser);
-
-			System.out.println(client.getNom() + " | " + client.getPrenom() + " | " + client.getTelephone() + " | "
+			
+			System.out.println("----------------------CLIENT--------------");
+			System.out.println("Nom :" + client.getNom() + " | Prenom : " + client.getPrenom() + " | Telephone : " + client.getTelephone() + " | Mail : "
 					+ client.getMail());
-
+			System.out.println("-Liste d'adresse du client --- ");
 			for (Adresse a : client.getAdressList()) {
 				System.out.println(a.getNomAdresse() + " | " + a.getAdresse());
 			}
+			System.out.println("-Liste de code promo ---- ");
 			for (CodePromo cp : client.getCodeList()) {
 				System.out.println(cp.getCode() + " | " + cp.getReduction() + " | " + cp.isUsed());
 			}
+			System.out.println("----------------------------------------");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
