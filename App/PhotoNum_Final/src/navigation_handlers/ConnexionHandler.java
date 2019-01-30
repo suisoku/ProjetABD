@@ -1,18 +1,17 @@
 package navigation_handlers;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import application.LectureClavier;
 import bd_layer.queryModel.QueryMethods;
+import dataInterfaces.Client;
 import navigation_handlers.core.GenericMenu;
 
 public class ConnexionHandler {
 
 	private static QueryMethods landing_queries = new QueryMethods();
 	public static int idUser;
+	public static Client userClient;
 
 	// Launching the main menu for user-based interaction
 	public static void start() {
@@ -26,8 +25,9 @@ public class ConnexionHandler {
 			String mdp = LectureClavier.lireChaine();
 			try {
 				idUser = landing_queries.authentification("client", mail, mdp);
-				if (idUser != 0)
-					ClientMenuHandler.start();
+				if (idUser != 0) {
+					userClient = landing_queries.getClient(idUser);
+					ClientMenuHandler.start();}
 				else
 					System.out.println("Informations saisies incorrectes. Veuillez réessayer!");
 			} catch (NumberFormatException e) {

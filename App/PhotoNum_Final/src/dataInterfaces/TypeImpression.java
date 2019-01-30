@@ -11,7 +11,7 @@ public class TypeImpression{
 	public HashMap<String , Object> attributes;
 	
 	public TypeImpression(String type, HashMap<String, Object> attr) {
-		this.type = TypesI.valueOf(type);
+		this.type = TypesI.valueOf(type.toUpperCase());
 		this.attributes = attr;
 	}
 		

@@ -2,6 +2,7 @@ package bd_layer.queryModel;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 
 import dataInterfaces.*;
 public class TestQuery1 {
@@ -35,7 +36,7 @@ public class TestQuery1 {
 			}
 		
 		System.out.println("------------------------------");
-		
+	**/	
 		
 		System.out.println("--------TEST Impression photos ------------");
 		  Impression i = cq.getClientImpression(4).get(0);
@@ -49,9 +50,16 @@ public class TestQuery1 {
 			  System.out.println(pi.photo.getIdPhoto()+" | "+pi.photo.getChemin() + " | " + pi.photo.getCommentaire());
 		  }
 		  
+		  System.out.println("------------------------------");
 		  
+		
+		System.out.println("-------------ADD IMAGE-----------------");
+		Image im1 = new Image("test23/w/1.jpg" , 7 , "2K" , false , new Date() , 0);
+		//cq.addImage(im1);
 		System.out.println("------------------------------");
-			
-		**/
+		
+		System.out.println("-------------ADD IMAGE-----------------");
+		System.out.println(cq.prixImpression(cq.getImpression(1)));
+		System.out.println("------------------------------");
 	}
 }

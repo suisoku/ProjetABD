@@ -115,6 +115,7 @@ public class GenericMenu {
 						runCommand(option);
 					} catch (Exception ex) {
 						System.out.println("Oops!: " + ex.getMessage());
+						ex.printStackTrace();
 					}
 					break;
 				}
