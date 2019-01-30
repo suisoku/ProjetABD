@@ -94,7 +94,7 @@ public class ClientHandler {
 
 	public static void addImage() {
 
-		Image image = getImageInput(5);
+		Image image = getImageInput(ConnexionHandler.idUser);
 
 		try {
 			client_queries.addImage(image);
