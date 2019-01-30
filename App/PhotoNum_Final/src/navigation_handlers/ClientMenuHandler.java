@@ -26,6 +26,7 @@ public class ClientMenuHandler {
 
 	// Launching the main menu for user-based interaction
 	public static void start() {
+		System.out.println("Current user: " + ConnexionHandler.idUser);
 		GenericMenu genericMenu = new GenericMenu();
 		load();
 		int optionId = 0;

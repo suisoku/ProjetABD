@@ -12,6 +12,7 @@ public class ImageHandler {
 
 
 	public static void getStats() {
+		System.out.println("Current user: " + ConnexionHandler.idUser);
 		ArrayList<Tuple> statistiques = new ArrayList<Tuple>();
 		try {
 			statistiques = image_queries.getStatImages();

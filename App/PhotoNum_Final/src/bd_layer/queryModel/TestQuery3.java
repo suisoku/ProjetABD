@@ -33,6 +33,8 @@ public class TestQuery3 {
 		System.out.println("------- TEST STAT IMAGE ---------");
 			cq.getStatImages().forEach(t -> System.out.println(t.toString()));
 		System.out.println("------------------------------");
+		
+		System.out.println("Id : " + cq.authentification("client", "aduddle0@blogs.com", "Sélène")); 
 	}
 	
 	

@@ -43,9 +43,10 @@ public class QueryMethods {
 	public int authentification(String table, String mail, String mdp) throws NumberFormatException, SQLException {
 
 		ResQ array = ConnectionBD.getData(con,
-				"select id from " + table + " where mail=" + mail + " and mdp=" + mdp + "");
+				"select idClient from " + table + " where mail='" + mail + "' and mdp='" + mdp + "'");
 		
-		return array.isEmpty() ? 0 :(Integer.parseInt(array.get(0).toString()));
+		System.out.println(array.get(0).toString());
+		return array.isEmpty() ? 0 :(Integer.parseInt(array.get(0).get(0).toString()));
 
 	}
 
