@@ -13,13 +13,15 @@ public class ClientMenuHandler {
 	 * Filling the menu options for the normal interaction mode
 	 */
 	private static void load() {
-		map.put("Ajouter un client", ClientHandler::add);
+		map.put("Ajouter une image", ClientHandler::addImage);
+		map.put("Retoucher une image (créer photo)", ClientHandler::addPhoto);
 		map.put("Créer une impression", ClientHandler::createImpression);
 		map.put("Modifier/Supprimer une impression", ClientHandler::updateImpression);
 		map.put("Modifier/supprimer une photo", ClientHandler::updatePhoto);
 		map.put("Supprimer une image", ClientHandler::delete);
 		map.put("Voir les statistiques sur les images", ImageHandler::getStats);
 		map.put("Consulter mes informations", ClientHandler::showDetails);
+		map.put("Saisir une commande", ClientHandler::createCommand);
 	}
 
 	// Launching the main menu for user-based interaction
@@ -42,5 +44,4 @@ public class ClientMenuHandler {
 		// Initalizing the menu
 		genericMenu.initMenu(false);
 	}
-
 }

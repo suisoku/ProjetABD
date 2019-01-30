@@ -1,21 +1,24 @@
 package navigation_handlers;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 
 import application.LectureClavier;
+import bd_layer.Tuple;
 import bd_layer.queryModel.QueryMethods;
 import dataInterfaces.Adresse;
 import dataInterfaces.Client;
 import dataInterfaces.CodePromo;
 import dataInterfaces.Image;
+import dataInterfaces.Photo;
 import navigation_handlers.core.GenericMenu;
 
 public class ClientHandler {
 
 	private static QueryMethods client_queries = new QueryMethods();
 
-	public static void add() {
+	public static void addUser() {
 
 		Client client = getUserInput();
 
@@ -24,15 +27,51 @@ public class ClientHandler {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 	}
 	
+	public static void updateImageStatus() {
+		GenericMenu genericMenu = new GenericMenu();
+
+		try {
+			ArrayList<Image> myImages = client_queries.getClientImages(1);
+
+			for (int i = 0; i < myImages.size(); i++) {
+				String path = myImages.get(i).getChemin();
+				genericMenu.addMenuItem(i + "", path, () -> {
+				Tuple values = new Tuple("partager","1");
+				try {
+					client_queries.updateImage(path, values);
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}});
+			};
+
+			genericMenu.initMenu(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+
 	public static void updatePhoto() {
 		System.out.println("Opération de mise à jour réussie");
 	}
-	
+
 	public static void createImpression() {
-		System.out.println("Ajout impression réussi");
+		GenericMenu interactionTypeChoice = new GenericMenu();
+
+		interactionTypeChoice.addMenuItem("0", "Supprimer impression", () -> {
+			ImpressionHandler.delete();
+		});
+
+		interactionTypeChoice.addMenuItem("1", "Modifier impression", () -> {
+			ImpressionHandler.update();
+		});
+
+		interactionTypeChoice.initMenu(false);
 	}
 
 	public static void updateImpression() {
@@ -45,14 +84,15 @@ public class ClientHandler {
 		interactionTypeChoice.addMenuItem("1", "Modifier impression", () -> {
 			ImpressionHandler.update();
 		});
-		
+
 		// Launching the app via the menu
 		interactionTypeChoice.initMenu(false);
 	}
-	
-	
+
+	public static void createCommand() {
+	}
+
 	public static void addImage() {
-		
 
 		Image image = getImageInput(5);
 
@@ -61,27 +101,72 @@ public class ClientHandler {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
-		
+
 	}
-	
-	public static void delete() {
-		
-		System.out.println("Saisir le chemin de l'image");
-		String chemin = LectureClavier.lireChaine();
-		
+
+	public static void addPhoto() {
+		GenericMenu genericMenu = new GenericMenu();
+
 		try {
-			client_queries.deleteImage(chemin);
+			ArrayList<Image> myImages = client_queries.getClientImages(1);
+
+			for (int i = 0; i < myImages.size(); i++) {
+				String path = myImages.get(i).getChemin();
+				genericMenu.addMenuItem(i + "", path, () -> createPhoto(path));
+			}
+
+			genericMenu.initMenu(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	
+
+	public static void createPhoto(String chemin) {
+
+		System.out.println("Type de retouche : ");
+		String retouche = LectureClavier.lireChaine();
+
+		System.out.println("Commentaire : ");
+		String commentaire = LectureClavier.lireChaine();
+
+		Photo photo = new Photo(chemin, commentaire, retouche);
+		try {
+			client_queries.addPhoto(photo);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+
+	public static void delete() {
+
+		GenericMenu genericMenu = new GenericMenu();
+
+		try {
+			ArrayList<Image> myImages = client_queries.getClientImages(1);
+
+			for (int i = 0; i < myImages.size(); i++) {
+				String path = myImages.get(i).getChemin();
+				genericMenu.addMenuItem(i + "", path, () -> {
+					try {
+						client_queries.deleteImage(path);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
+			}
+
+			genericMenu.initMenu(false);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public static void showDetails() {
 		try {
-			Client client = client_queries.getClient(10);
+			Client client = client_queries.getClient(ConnexionHandler.idUser);
 
 			System.out.println(client.getNom() + " | " + client.getPrenom() + " | " + client.getTelephone() + " | "
 					+ client.getMail());
@@ -117,22 +202,21 @@ public class ClientHandler {
 
 		return new Client(mail, nom, prenom, mdp, telephone);
 	}
-	
+
 	public static Image getImageInput(int idClient) {
-		
-		
-		System.out.println("Entrer le chemin de l'image: ");
+
+		System.out.println("Entrer le chemin de l'image : ");
 		String chemin = LectureClavier.lireChaine();
 
-		System.out.println("Entrer la résolution de l'image: ");
+		System.out.println("Entrer la résolution de l'image : ");
 		String resolution = LectureClavier.lireChaine();
 
 		System.out.println("Entrer mail user : ");
-		boolean partage = LectureClavier.lireOuiNon("Image partagée: " );
+		boolean partage = LectureClavier.lireOuiNon("Image partagée: ");
 
 		Date dateUtilisation = new Date();
-		
-		return new Image(chemin, idClient, resolution, partage, dateUtilisation,0);
-		
+
+		return new Image(chemin, idClient, resolution, partage, dateUtilisation, 0);
+
 	}
 }

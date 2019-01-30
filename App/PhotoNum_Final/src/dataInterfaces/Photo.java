@@ -5,6 +5,12 @@ public class Photo {
 	private int idPhoto;
 	private String chemin, commentaire, typeRetouche;
 	
+	public Photo(String chemin, String commentaire, String typeRetouche) {
+		this.chemin = chemin;
+		this.commentaire = commentaire;
+		this.typeRetouche = typeRetouche;
+	}
+	
 	public Photo(int idPhoto, String chemin, String commentaire, String typeRetouche) {
 		this.idPhoto = idPhoto;
 		this.chemin = chemin;
