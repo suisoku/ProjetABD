@@ -41,12 +41,16 @@ public class QueryMethods {
 	private final static Connection con = ConnectionBD.getConnection();
 
 	public int authentification(String table, String mail, String mdp) throws NumberFormatException, SQLException {
+		ResQ array = null;
+		if (table.equals("client"))
+			array = ConnectionBD.getData(con,
+					"select idClient from " + table + " where mail='" + mail + "' and mdp='" + mdp + "'");
+		else
+			array = ConnectionBD.getData(con,
+					"select idAdmin from " + table + " where mail='" + mail + "' and mdp='" + mdp + "'");
 
-		ResQ array = ConnectionBD.getData(con,
-				"select idClient from " + table + " where mail='" + mail + "' and mdp='" + mdp + "'");
-		
 		System.out.println(array.get(0).toString());
-		return array.isEmpty() ? 0 :(Integer.parseInt(array.get(0).get(0).toString()));
+		return array.isEmpty() ? 0 : (Integer.parseInt(array.get(0).get(0).toString()));
 
 	}
 
@@ -217,6 +221,16 @@ public class QueryMethods {
 		return ti;
 	}
 
+	public ArrayList<Client> getClients() throws SQLException {
+		ResQ array = ConnectionBD.getData(con, "select idClient,mail from Client");
+		ArrayList<Client> clientList = new ArrayList<Client>();
+
+		for (ArrayList<Object> row : array) {
+			clientList.add(new Client(Integer.parseInt(row.get(0).toString()), row.get(0).toString()));
+		}
+		return clientList;
+	}
+
 	public ArrayList<Image> getClientImages(int clientId) throws SQLException {
 		ResQ array = ConnectionBD.getData(con,
 				"select chemin,idClient,partager from Image where idclient=" + clientId + "");
@@ -319,9 +333,12 @@ public class QueryMethods {
 
 		String dateS = new SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation()).toUpperCase();
 
-		 System.out.println(dateS);
+		//System.out.println(dateS);
+
 		values.add(dateS);
 		
+		values.add(image.getFileAttente() + "");
+
 		values.add(image.getFileAttente() + "");
 
 		ConnectionBD.addData(con, "image", values);
@@ -431,8 +448,6 @@ public class QueryMethods {
 		ConnectionBD.addData(con, "adresse", values);
 	}
 
-
-
 	/** DELETE STUFF -------------------------------- **/
 
 	public void deletePhotoImpression(PhotoImpression p) throws SQLException {
@@ -522,4 +537,5 @@ public class QueryMethods {
 		return (ArrayList<Tuple>) a.stream().map(s -> new Tuple(s.get(0).toString(), s.get(1).toString()))
 				.collect(Collectors.toList());
 	}
+
 }
