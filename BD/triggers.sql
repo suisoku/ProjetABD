@@ -4,13 +4,13 @@ drop trigger trigger_Statut_Commande;
 drop trigger trigger_insert_Commande;
 drop trigger trigger_delete_commande;
 drop trigger trigger_insert_impression;
-drop trigger trigger_Desactivation_Client
+drop trigger trigger_Desactivation_Client;
 drop trigger trigger_ImageUsed;
 drop trigger trigger_file_attenteImage;
 drop trigger commandePossible1;
 drop trigger mailSending;
 drop trigger commandePossible;
-call dbms_scheduler.drop_job('deleteNoUsedImagesJob');
+--call dbms_scheduler.drop_job('deleteNoUsedImagesJob');
 drop procedure deleteNoUsedImages;
 drop function countDays;
 
@@ -38,7 +38,7 @@ end;
 
 
 
-begin
+/*begin
   DBMS_SCHEDULER.CREATE_JOB(
       job_name => 'deleteNoUsedImagesJob',
       job_type => 'STORED_PROCEDURE',
@@ -49,7 +49,7 @@ begin
       auto_drop => false,
       comments => 'image(s) deleted');
 END;
-/
+/*/
 
 -- Trigger which updates Image Date when ever the image is used in photo_Impression --
 CREATE or Replace trigger updateImageTable
@@ -421,4 +421,3 @@ begin
 end;
 /
 commit;
-
