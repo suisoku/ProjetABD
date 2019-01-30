@@ -231,21 +231,19 @@ begin
 end;
 /
 
-create or replace trigger trigger_file_attenteImage
+ccreate or replace trigger trigger_file_attenteImage
 after update of statut on commande
 declare
   Cursor c1 is
     select i.chemin, i.fileAttente
-    from COMMANDE_IMPRESSION ci join PHOTO_IMPRESSION pi on ci.IDIMPRESSION=pi.IDIMPRESSION
-      join PHOTO p on p.IDPHOTO=pi.IDPHOTO join IMAGE I on p.CHEMIN = I.CHEMIN
-    where ci.IDCOMMANDE=:new.idCommande and i.fileAttente!='0';
+    from IMAGE i
+    where  i.fileAttente!='0';
 
   nbCommandeAPrep int;
   unTuple c1%rowtype;
 begin
 
   open c1;
-  if :new.statut!='EnCoursPreparation' and :old.statut='EnCoursPreparation' then
 
     fetch c1 into unTuple;
 
@@ -255,7 +253,7 @@ begin
       select nvl(count(c.idCommande),0) into nbCommandeAPrep
       from COMMANDE c join COMMANDE_IMPRESSION ci on c.IDCOMMANDE=ci.IDCOMMANDE join PHOTO_IMPRESSION pi on ci.IDIMPRESSION=pi.IDIMPRESSION
         join PHOTO p on p.IDPHOTO=pi.IDPHOTO join IMAGE I on p.CHEMIN = I.CHEMIN
-      where c.IDCOMMANDE!=:new.idCommande and c.statut='EncoursPreparation' and i.chemin=unTuple.chemin;
+      where c.statut='EncoursPreparation' and i.chemin=unTuple.chemin;
 
 
       if nbCommandeAPrep = 0 then
@@ -270,7 +268,6 @@ begin
     fetch c1 into unTuple;
     end loop;
 
-  end if;
 
   close c1;
 
