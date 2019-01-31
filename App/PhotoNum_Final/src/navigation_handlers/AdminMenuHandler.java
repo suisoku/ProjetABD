@@ -1,9 +1,11 @@
 package navigation_handlers;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import application.LectureClavier;
+import bd_layer.ConnectionBD;
 import bd_layer.Tuple;
 import bd_layer.queryModel.QueryMethods;
 import dataInterfaces.Commande;
@@ -48,19 +50,27 @@ public class AdminMenuHandler {
 		GenericMenu genericMenu = new GenericMenu();
 
 		try {
+			/** TRANSACTION WITh CONCURRENCY **/
+			ConnectionBD.conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			ConnectionBD.conn.setAutoCommit(false);
+			
 			ArrayList<Commande> commandes = admin_queries.getCommandes();
 			for (int i = 0; i < commandes.size(); i++) {
 				int idCmd = commandes.get(i).getIdCmd();
 				String option = "| Id: "+ commandes.get(i).getIdCmd() + " | Mode livraison:  " + commandes.get(i).getModeLivraison();
 				genericMenu.addMenuItem(i + "", option, () -> updateCommandeStatus(idCmd));
 			}
-			;
+			ConnectionBD.conn.commit();
 
 			genericMenu.initMenu(false);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			try {ConnectionBD.conn.rollback();}catch (SQLException e1) {e1.printStackTrace();}
 			System.out.println("Error : " + e.getMessage());
 		}
+		try {
+			ConnectionBD.conn.setAutoCommit(true);
+			ConnectionBD.conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+		}catch (SQLException e2) {e2.printStackTrace();}
 		
 	}
 
