@@ -1,7 +1,12 @@
 package scenario;
 
+import bd_layer.queryModel.QueryMethods;
+
 public class ScenarioMain {
 	public static void main(String[]  args) throws InterruptedException {
+		
+		QueryMethods q = new QueryMethods();
+		
 		
 		
 		ClientBot client1 = new ClientBot();

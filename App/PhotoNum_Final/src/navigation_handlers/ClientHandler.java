@@ -1,10 +1,7 @@
 package navigation_handlers;
 
-<<<<<<< HEAD
-import java.util.Date;
+
 import java.sql.Connection;
-=======
->>>>>>> branch 'master' of https://github.com/suisoku/ProjetABD.git
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
