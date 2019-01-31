@@ -58,8 +58,14 @@ public class TestQuery1 {
 		//cq.addImage(im1);
 		System.out.println("------------------------------");
 		
-		System.out.println("-------------ADD IMAGE-----------------");
+		System.out.println("-------------GET PRICE-----------------");
 		System.out.println(cq.prixImpression(cq.getImpression(1)));
 		System.out.println("------------------------------");
+		
+		System.out.println("-------------Get photos image-----------------");
+		cq.getPhotosImage("/usr/tmp/1.jpg").forEach(e -> System.out.println(e.getChemin() +" | "+ e.getTypeRetouche()));;
+		System.out.println("------------------------------");
+		
+		System.out.println(TypeImpression.TypesI.AGENDA.name());
 	}
 }
