@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class ConnectionBD {
 
     private static final String configurationFile = "src/bd_layer/BD.properties";
-    private static Connection conn;
+    public static Connection conn;
     
     public static Connection getConnection() {
         try {

@@ -1,6 +1,7 @@
 package navigation_handlers;
 
 import java.util.Date;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -9,6 +10,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 
 import application.LectureClavier;
+import bd_layer.ConnectionBD;
 import bd_layer.Tuple;
 import bd_layer.queryModel.QueryMethods;
 import dataInterfaces.Adresse;
@@ -66,9 +68,14 @@ public class ClientHandler {
 	}
 
 	public static void changeImageStatus() {
+
 		GenericMenu genericMenu = new GenericMenu();
 
 		try {
+			/** TRANSACTION WITh CONCURRENCY **/
+			ConnectionBD.conn.setAutoCommit(false);
+			ConnectionBD.conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			
 			ArrayList<Image> myImages = client_queries.getClientImages(ConnexionHandler.idUser);
 
 			for (int i = 0; i < myImages.size(); i++) {
@@ -80,13 +87,18 @@ public class ClientHandler {
 			genericMenu.initMenu(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			try {ConnectionBD.conn.rollback();}catch (SQLException e1) {e1.printStackTrace();}
 			e.printStackTrace();
 		}
-
+		
+		try {
+			ConnectionBD.conn.setAutoCommit(true);
+			ConnectionBD.conn.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+		}catch (SQLException e2) {e2.printStackTrace();}
 	}
 
 	public static void updatePhoto() {
-		System.out.println("Opération de mise à jour réussie");
+		System.out.println("Opération de mise à jour réussie"); //a faire
 	}
 
 	public static void createImpression() {
