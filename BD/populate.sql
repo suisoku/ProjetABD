@@ -188,3 +188,5 @@ insert into AdminCommande values (2,2,'15-JAN-19');
 insert into AdminCommande values (3,3,'16-JAN-19');
 insert into AdminCommande values (4,4,'17-JAN-19');
 insert into AdminCommande values (5,5,'18-JAN-19');
+
+commit;
