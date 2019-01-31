@@ -53,6 +53,7 @@ public class TestQuery1 {
 		}
 
 		System.out.println("------------------------------");
+<<<<<<< HEAD
 
 		System.out.println("-------------ALL IMAGE-----------------");
 		try {
@@ -69,5 +70,17 @@ public class TestQuery1 {
 		}
 		System.out.println("------------------------------");
 
+=======
+		
+		System.out.println("-------------GET PRICE-----------------");
+		System.out.println(cq.prixImpression(cq.getImpression(1)));
+		System.out.println("------------------------------");
+		
+		System.out.println("-------------Get photos image-----------------");
+		cq.getPhotosImage("/usr/tmp/1.jpg").forEach(e -> System.out.println(e.getChemin() +" | "+ e.getTypeRetouche()));;
+		System.out.println("------------------------------");
+		
+		System.out.println(TypeImpression.TypesI.AGENDA.name());
+>>>>>>> ad9b2b85dbbabdd69ccd5f71d191b2b319fdb9a9
 	}
 }
