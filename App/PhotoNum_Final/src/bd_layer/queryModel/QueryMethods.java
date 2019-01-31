@@ -545,7 +545,7 @@ public class QueryMethods {
 		conds.add(new Tuple("chemin", chemin + ""));
 		ConnectionBD.updateData(con, "image", conds, new ArrayList<Tuple>(Arrays.asList(values)));
 	}
-
+	
 	// update commande
 
 	public void updateCommande(int idCommande, Tuple... values) throws SQLException {

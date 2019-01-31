@@ -14,5 +14,6 @@ public class ScenarioMain {
 		
 		client2.start(); //il utilise l'image pour creer ses photos et son impression
 		
+		
 	}
 }
