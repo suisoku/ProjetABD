@@ -1,12 +1,9 @@
 package navigation_handlers;
 
-import java.util.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicReference;
-
 
 import application.LectureClavier;
 import bd_layer.Tuple;

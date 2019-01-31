@@ -242,6 +242,17 @@ public class QueryMethods {
 		}
 		return imageList;
 	}
+	
+	public ArrayList<Image> getDBImages() throws SQLException {
+		ResQ array = ConnectionBD.getData(con,
+				"select chemin,partager from Image");
+		ArrayList<Image> imageList = new ArrayList<Image>();
+
+		for (ArrayList<Object> row : array) {
+			imageList.add(new Image(row.get(0).toString(),row.get(1).toString() == "1" ? true : false));
+		}
+		return imageList;
+	}
 
 	/** Je veux afficher les photos d'une impression **/
 	public ArrayList<PhotoImpression> getPhotoImpression(int idImpression) throws SQLException {

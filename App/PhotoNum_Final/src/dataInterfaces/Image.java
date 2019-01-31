@@ -9,6 +9,11 @@ public class Image {
 	private boolean partager;
 	private Date dateUtilisation;
 	
+	public Image(String chemin, boolean partager ) {
+		this.chemin = chemin;
+		this.partager = partager;
+	}
+
 	public Image(String chemin, int idClient, boolean partager ) {
 		this.chemin = chemin;
 		this.idClient = idClient;
