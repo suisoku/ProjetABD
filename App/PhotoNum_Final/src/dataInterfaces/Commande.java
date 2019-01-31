@@ -13,10 +13,16 @@ public class Commande {
 	private boolean historise;
 	private String renduPdf;
 	private ArrayList<CommandeImpression> commandeImpressions;
-	
-	public Commande(int idCmd, int idClient, int idAdresse , Date datePaiement, float montant,int historise, String rendu , 
-			String statut, String modeLivraison, ArrayList<CommandeImpression> ci) 
-	{
+
+	public Commande(int idCmd, float montant, String statut, String modeLivraison) {
+		this.idCmd = idCmd;
+		this.modeLivraison = modeLivraison;
+		this.montant = montant;
+		this.statut = statut;
+	}
+
+	public Commande(int idCmd, int idClient, int idAdresse, Date datePaiement, float montant, int historise,
+			String rendu, String statut, String modeLivraison, ArrayList<CommandeImpression> ci) {
 		this.idCmd = idCmd;
 		this.idClient = idClient;
 		this.datePaiement = datePaiement;
@@ -24,13 +30,12 @@ public class Commande {
 		this.montant = montant;
 		this.statut = statut;
 		this.historise = (historise == 1) ? true : false;
-		this.commandeImpressions= ci ;
+		this.commandeImpressions = ci;
 		this.renduPdf = rendu;
 		this.idAdresse = idAdresse;
-		
+
 	}
-		
-	
+
 	public int getIdAdresse() {
 		return idAdresse;
 	}

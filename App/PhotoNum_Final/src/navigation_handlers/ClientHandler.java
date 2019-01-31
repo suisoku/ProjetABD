@@ -1,13 +1,16 @@
 package navigation_handlers;
 
+<<<<<<< HEAD
 import java.util.Date;
 import java.sql.Connection;
+=======
+>>>>>>> branch 'master' of https://github.com/suisoku/ProjetABD.git
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import java.util.Date;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-
 
 import application.LectureClavier;
 import bd_layer.ConnectionBD;
@@ -19,7 +22,10 @@ import dataInterfaces.CodePromo;
 import dataInterfaces.Commande;
 import dataInterfaces.CommandeImpression;
 import dataInterfaces.Image;
+import dataInterfaces.Impression;
 import dataInterfaces.Photo;
+import dataInterfaces.PhotoImpression;
+import dataInterfaces.TypeImpression;
 import navigation_handlers.core.GenericMenu;
 
 public class ClientHandler {
@@ -48,7 +54,7 @@ public class ClientHandler {
 				client_queries.updateImage(path, values);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Erreur: " + e.getMessage());
 			}
 		});
 
@@ -59,7 +65,7 @@ public class ClientHandler {
 				client_queries.updateImage(path, values);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Erreur: " + e.getMessage());
 			}
 		});
 
@@ -89,6 +95,7 @@ public class ClientHandler {
 			// TODO Auto-generated catch block
 			try {ConnectionBD.conn.rollback();}catch (SQLException e1) {e1.printStackTrace();}
 			e.printStackTrace();
+
 		}
 		
 		try {
@@ -102,17 +109,120 @@ public class ClientHandler {
 	}
 
 	public static void createImpression() {
-		GenericMenu interactionTypeChoice = new GenericMenu();
-
-		interactionTypeChoice.addMenuItem("0", "Supprimer impression", () -> {
-			ImpressionHandler.delete();
-		});
-
-		interactionTypeChoice.addMenuItem("1", "Modifier impression", () -> {
-			ImpressionHandler.update();
-		});
-
-		interactionTypeChoice.initMenu(false);
+		Client cl = ConnexionHandler.userClient;
+		AtomicReference<TypeImpression.TypesI> typeImp= new AtomicReference<TypeImpression.TypesI>();
+		AtomicReference<String> nomImp= new AtomicReference<String>();
+		AtomicInteger lindex= new AtomicInteger(0);
+		
+		ArrayList<Photo> photos = new ArrayList<Photo>();
+		ArrayList<PhotoImpression> pImp = new ArrayList<PhotoImpression>();
+		ArrayList<Image> images = new ArrayList<Image>();
+		GenericMenu enumType = new GenericMenu();
+		GenericMenu photoMenu = new GenericMenu();
+		//int lindex = 0;
+		
+		//STEP 1 : choisir le nom de l'impression
+		System.out.println("Tapez le nom de l'impression");
+	    nomImp.set(LectureClavier.lireChaine());
+	    
+	    
+	    // STEP2choisir le type de l'impression
+		enumType.addMenuItem("1", "CADRE", () -> {typeImp.set(TypeImpression.TypesI.CADRE);});
+		enumType.addMenuItem("2", "AGENDA", () -> {typeImp.set(TypeImpression.TypesI.AGENDA);});
+		enumType.addMenuItem("3", "CALENDRIER", () -> {typeImp.set(TypeImpression.TypesI.CALENDRIER);});
+		enumType.addMenuItem("4", "ALBUM", () -> {typeImp.set(TypeImpression.TypesI.ALBUM);});
+		enumType.addMenuItem("5", "TIRAGE", () -> {typeImp.set(TypeImpression.TypesI.TIRAGE);});
+		
+		enumType.initMenu(false);
+		
+		//STEP 2 BIS parametrer les attributs de l'impression A faire
+		HashMap<String, Object> params =  new HashMap<String, Object>();
+		
+		switch (typeImp.get().name()) {
+		
+		   case "CADRE" : 
+			   System.out.println("Choisir Produit : ");
+			   System.out.println("Produit 1");
+			   params.put("IDPRODUIT", "1");
+			   System.out.println("Mise en page souhaite : ");
+			   params.put("MISEENPAGE", LectureClavier.lireChaine());
+			   break;
+			   
+		   case "AGENDA" : 
+			   System.out.println("Choisir Produit : ");
+			   System.out.println("Produit 2");
+			   params.put("IDPRODUIT", "2");
+			   System.out.println("Type Agenda souhaite : ");
+			   params.put("TYPEAGENDA", LectureClavier.lireChaine());
+			   System.out.println("Modele souhaite : ");
+			   params.put("MODELE", LectureClavier.lireChaine());
+			   break;
+			   
+		   case "CALENDRIER" : 
+			   System.out.println("Choisir Produit : ");
+			   System.out.println("Produit 3");
+			   params.put("IDPRODUIT", "3");
+			   System.out.println("Type Calendrier souhaite : ");
+			   params.put("TYPECALENDRIER", LectureClavier.lireChaine());
+			   break;
+			   
+		   case "ALBUM" : 
+			   System.out.println("Choisir Produit : ");
+			   System.out.println("Produit 5");
+			   params.put("IDPRODUIT", "5");
+			   System.out.println("Titre souhaite : ");
+			   params.put("TITRE", LectureClavier.lireChaine());
+			   System.out.println("Mise en page souhaite : ");
+			   params.put("MISEENPAGE", LectureClavier.lireChaine());
+			   break;
+			   
+		   case "TIRAGE" : 
+			   System.out.println("Choisir Produit : ");
+			   System.out.println("Produit 4");
+			   params.put("IDPRODUIT", "4");
+			   System.out.println("FORMAT IMPRESSION  souhaite : ");
+			   params.put("FORMATIMPRESSION", LectureClavier.lireChaine());
+			   break;
+		}
+		
+		TypeImpression ti = new TypeImpression(typeImp.get().name(), params);
+		Impression finalImpression = new Impression(0, cl.getIdClient(), nomImp.get(), null);
+		finalImpression.setTypeImpression(ti);
+		
+		//STEP 3: Add impression
+		
+		try {lindex.set(client_queries.addImpression(finalImpression));}
+		catch (SQLException e) {System.out.println("Erreur: " + e.getMessage());}
+		
+		//STEP 4 : choisir les photos a integrer ( tous les photos de tous les images que le client possede) 1/2
+		
+		try {images = client_queries.getClientImages(cl.getIdClient());}
+		catch (SQLException e) {System.out.println("Erreur: " + e.getMessage());}
+		
+		for(Image im : images) {
+			try {photos.addAll(client_queries.getPhotosImage(im.getChemin()));} 
+			catch (SQLException e) {System.out.println("Erreur: " + e.getMessage());}
+		}
+		
+		for(Photo p : photos) {
+		photoMenu.addMenuItem(p.getIdPhoto() + "", p.getTypeRetouche(),
+				()->{
+					 //System.out.println("Saisssez les specifications particulieres");
+					 pImp.add(new PhotoImpression(lindex.get(), p, nomImp.get()));}
+			);
+		}
+		
+		System.out.println("Choisissez les photos a integrer dans l'impression : ");
+		photoMenu.initMenu(false);
+		
+		// STEP 4 bis + photo des images partagees 2/2 A Faire
+		
+		
+		// STEP 5 final insert the photos in the newly created impression
+		try {for(PhotoImpression pii : pImp) {client_queries.addPhotoImpression(pii);}}
+		catch (SQLException e) {System.out.println("Erreur: " + e.getMessage());}
+		
+		System.out.println("Photos ajoutes avec succees");
 	}
 
 	public static void updateImpression() {
@@ -147,7 +257,7 @@ public class ClientHandler {
 						commImps.add(new CommandeImpression(e,q));
 					}
 			));} 
-		catch (NumberFormatException | SQLException e) {e.printStackTrace();}
+		catch (NumberFormatException | SQLException e) {System.out.println("Erreur: " + e.getMessage());}
 
 		System.out.println("Choisissez les impressions a commander [pour finir taper F]");
 
@@ -172,7 +282,7 @@ public class ClientHandler {
 				float subprice = 0;
 				
 				try{subprice = client_queries.prixImpression(ci.impression);}
-				catch (SQLException e) {e.printStackTrace();}
+				catch (SQLException e) {System.out.println("Erreur: " + e.getMessage());}
 			
 				System.out.println("Commande :" + ci.impression.getNom() + " P :" + subprice + " P x Q :" + subprice*ci.quantite);
 				
@@ -238,7 +348,7 @@ public class ClientHandler {
 			genericMenu.initMenu(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Erreur: " + e.getMessage());
 		}
 	}
 
@@ -272,7 +382,7 @@ public class ClientHandler {
 						client_queries.deleteClient(id);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						System.out.println("Erreur: " + e.getMessage());
 					}
 				});
 			}
@@ -280,7 +390,7 @@ public class ClientHandler {
 			genericMenu.initMenu(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Erreur: " + e.getMessage());
 		}
 	}
 
@@ -298,7 +408,7 @@ public class ClientHandler {
 						client_queries.deleteImage(path);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						System.out.println("Erreur: " + e.getMessage());
 					}
 				});
 			}
@@ -306,7 +416,7 @@ public class ClientHandler {
 			genericMenu.initMenu(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Erreur: " + e.getMessage());
 		}
 	}
 
@@ -327,7 +437,7 @@ public class ClientHandler {
 			}
 			System.out.println("----------------------------------------");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("Erreur: " + e.getMessage());
 		}
 	}
 

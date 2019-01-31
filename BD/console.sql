@@ -259,11 +259,9 @@ Create table Tirage
   idImpression     NUMBER primary key,
   idProduit        int,
   formatImpression varchar2(250) NOT NULL,
-  nbrExemplaire    NUMBER           NOT NULL,
   constraint fk_Tirage1 Foreign key (idImpression) references Impression (idImpression) on delete cascade,
   constraint fk_Tirage2 Foreign key (idProduit) references TirageProduit (idProduit) on delete cascade,
-  constraint tirage_c1 check (formatImpression in ('A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9')),
-  constraint tirage_c2 check (nbrExemplaire>0)
+  constraint tirage_c1 check (formatImpression in ('A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9'))
 );
 
 Create table Admin

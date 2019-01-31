@@ -1,6 +1,7 @@
 package scenario;
 
 import java.sql.SQLException;
+import java.util.Date;
 
 import bd_layer.queryModel.QueryMethods;
 import dataInterfaces.Client;
@@ -14,8 +15,8 @@ public class ClientBot extends Thread{
 		QueryMethods q =  new QueryMethods();
 		
 		// credentials
-		String mail =  "aduddle0@blogs.com";
-		String mdp =  "Sélène";
+		String mail =  "jgalsworthy1@wikia.com";
+		String mdp =  "Mélodie";
 		int idClient = 0;
 		
 		//authentification
@@ -31,16 +32,23 @@ public class ClientBot extends Thread{
 			
 			
 			// add photo
-			Image image1 = new Image("/skur/skur1.jpg", idClient , false );
-			Image image2 = new Image("/skur/skur2.jpg", idClient , false );
-			Image image3 = new Image("/skur/skur3.jpg", idClient , false );
-			
+			Image image1 = new Image("/skur/skur1.jpg", idClient, "2K", false, new Date(), 0);
+			Image image2 = new Image("/skur/skur2.jpg", idClient, "4K", false, new Date(), 0);
+			Image image3 = new Image("/skur/skur3.jpg", idClient, "4K", false, new Date(), 0);
+			Image image4 = new Image("/skur/skur4.jpg", idClient, "8K", true, new Date(), 0);
+			Image image5 = new Image("/skur/skur5.jpg", idClient, "2K", true, new Date(), 0);
+
 			try {q.addImage(image1);  
 				 q.addImage(image2);  
-				 q.addImage(image3);} 
+				 q.addImage(image3);
+				 q.addImage(image4); 
+				 q.addImage(image5);} 
 			catch (NumberFormatException | SQLException e) {e.printStackTrace();}
 			
 			
+		}
+		else {
+			System.out.println("ERREUR Connection client");
 		}
 	}
 }

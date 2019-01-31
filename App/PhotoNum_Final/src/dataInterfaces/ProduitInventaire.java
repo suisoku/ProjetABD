@@ -6,7 +6,21 @@ public class ProduitInventaire {
 	private float prix;
 	
 	private String nomCommercial , caracteristique;
+	
+	public ProduitInventaire(int idProduit, String nomCommercial,  String caracteristique) {
+		super();
+		this.idProduit = idProduit;
+		this.nomCommercial = nomCommercial;
+		this.caracteristique = caracteristique;
+	}
 
+	public ProduitInventaire(int idProduit, String nomCommercial,  float prix) {
+		super();
+		this.idProduit = idProduit;
+		this.nomCommercial = nomCommercial;
+		this.prix = prix;
+	}
+	
 	public ProduitInventaire(int idProduit, String nomCommercial,  String caracteristique, int stock, float prix) {
 		super();
 		this.idProduit = idProduit;
@@ -15,6 +29,8 @@ public class ProduitInventaire {
 		this.nomCommercial = nomCommercial;
 		this.caracteristique = caracteristique;
 	}
+
+	public ProduitInventaire() {}
 
 	public int getIdProduit() {
 		return idProduit;
