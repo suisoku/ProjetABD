@@ -45,7 +45,7 @@ public class ClientHandler {
 		GenericMenu interactionTypeChoice = new GenericMenu();
 
 		// Adding a menu item using a Lambda expression.
-		interactionTypeChoice.addMenuItem("0", "Partager", () -> {
+		interactionTypeChoice.addMenuItem("1", "Partager", () -> {
 			Tuple values = new Tuple("partager", "1");
 			try {
 				client_queries.updateImage(path, values);
@@ -56,7 +56,7 @@ public class ClientHandler {
 		});
 
 		// Adding another menu item
-		interactionTypeChoice.addMenuItem("1", "Privatiser", () -> {
+		interactionTypeChoice.addMenuItem("0", "Privatiser", () -> {
 			Tuple values = new Tuple("partager", "0");
 			try {
 				client_queries.updateImage(path, values);
@@ -76,8 +76,8 @@ public class ClientHandler {
 
 		try {
 			/** TRANSACTION WITh CONCURRENCY **/
-			ConnectionBD.conn.setAutoCommit(false);
 			ConnectionBD.conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			ConnectionBD.conn.setAutoCommit(false);
 			
 			ArrayList<Image> myImages = client_queries.getClientImages(ConnexionHandler.idUser);
 
@@ -85,7 +85,7 @@ public class ClientHandler {
 				String path = myImages.get(i).getChemin();
 				genericMenu.addMenuItem(i + "", path, () -> updateImageStatus(path));
 			}
-			;
+			ConnectionBD.conn.commit();
 
 			genericMenu.initMenu(false);
 		} catch (SQLException e) {

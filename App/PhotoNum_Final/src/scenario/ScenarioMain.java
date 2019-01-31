@@ -7,7 +7,13 @@ public class ScenarioMain {
 		
 		QueryMethods q = new QueryMethods();
 		
+		//Scenarios Manuel -> 
+		//En Solo : Saisir Impression , En Concurrence : UpdateImageStatus (admin et client)
 		
+		//Scenario Script ->
+		// En Solo : xxxxxx , En Concurrence : ClientBot
+		
+		// Tout retester (Manuel et non )
 		
 		ClientBot client1 = new ClientBot();
 		
