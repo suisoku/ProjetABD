@@ -1,13 +1,9 @@
 package navigation_handlers;
 
-<<<<<<< HEAD
-=======
-import java.util.Date;
-import java.util.HashMap;
->>>>>>> ad9b2b85dbbabdd69ccd5f71d191b2b319fdb9a9
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -97,7 +93,6 @@ public class ClientHandler {
 
 	public static void createImpression() {
 		Client cl = ConnexionHandler.userClient;
-		String nomImpression;
 		AtomicReference<TypeImpression.TypesI> typeImp= new AtomicReference<TypeImpression.TypesI>();
 		AtomicReference<String> nomImp= new AtomicReference<String>();
 		AtomicInteger lindex= new AtomicInteger(0);

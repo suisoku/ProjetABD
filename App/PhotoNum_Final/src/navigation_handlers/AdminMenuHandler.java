@@ -42,7 +42,6 @@ public class AdminMenuHandler {
 
 		try {
 			ArrayList<Image> images = admin_queries.getDBImages();
-			System.out.println("Test");
 			for (int i = 0; i < images.size(); i++) {
 				String path = images.get(i).getChemin();
 				genericMenu.addMenuItem(i + "", path, () -> updateImageStatus(path));

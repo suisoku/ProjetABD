@@ -2,9 +2,14 @@ package bd_layer.queryModel;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 
-import dataInterfaces.*;
+import dataInterfaces.Adresse;
+import dataInterfaces.Client;
+import dataInterfaces.CodePromo;
+import dataInterfaces.Image;
+import dataInterfaces.Impression;
+import dataInterfaces.PhotoImpression;
+import dataInterfaces.TypeImpression;
 
 public class TestQuery1 {
 
@@ -53,7 +58,6 @@ public class TestQuery1 {
 		}
 
 		System.out.println("------------------------------");
-<<<<<<< HEAD
 
 		System.out.println("-------------ALL IMAGE-----------------");
 		try {
@@ -70,7 +74,6 @@ public class TestQuery1 {
 		}
 		System.out.println("------------------------------");
 
-=======
 		
 		System.out.println("-------------GET PRICE-----------------");
 		System.out.println(cq.prixImpression(cq.getImpression(1)));
@@ -81,6 +84,5 @@ public class TestQuery1 {
 		System.out.println("------------------------------");
 		
 		System.out.println(TypeImpression.TypesI.AGENDA.name());
->>>>>>> ad9b2b85dbbabdd69ccd5f71d191b2b319fdb9a9
 	}
 }

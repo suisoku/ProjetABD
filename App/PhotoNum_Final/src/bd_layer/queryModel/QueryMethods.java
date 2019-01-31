@@ -565,5 +565,18 @@ public class QueryMethods {
 		return (ArrayList<Tuple>) a.stream().map(s -> new Tuple(s.get(0).toString(), s.get(1).toString()))
 				.collect(Collectors.toList());
 	}
+	
+	public ArrayList<ProduitInventaire> getProduits() throws SQLException{
+		String query = "select idProduit,nomCommercial,caracteristique from INVENTAIRE";
+		ResQ array = ConnectionBD.getData(con, query);
+		
+		ArrayList<ProduitInventaire> produitList = new ArrayList<ProduitInventaire>();
+
+		for (ArrayList<Object> row : array) {
+			produitList.add(new ProduitInventaire(Integer.parseInt(row.get(0).toString()),
+					row.get(1).toString(),row.get(1).toString()));
+		}
+		return produitList;
+	}
 
 }
