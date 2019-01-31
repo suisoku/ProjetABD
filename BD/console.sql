@@ -110,7 +110,7 @@ Create table Photo
   chemin       varchar2(250),
   commentaire  varchar2(50),
   typeRetouche varchar2(250) NOT NULL,
-  constraint fk_Photo Foreign key (chemin) references Image (chemin) -- On ne fait rien --
+  constraint fk_Photo Foreign key (chemin) references Image (chemin) on delete cascade
 );
 
 
@@ -143,7 +143,7 @@ Create table Photo_Impression
   idImpression              NUMBER,
   specificationParticuliere varchar2(250) NOT NULL,
   constraint pk_PhotoImpression primary key (idPhoto, idImpression),
-  constraint fk_PhotoImpression1 Foreign key (idPhoto) references Photo (idPhoto),
+  constraint fk_PhotoImpression1 Foreign key (idPhoto) references Photo (idPhoto) on delete set null,
   constraint fk_PhotoImpression2 Foreign key (idImpression) references Impression (idImpression)
 );
 
