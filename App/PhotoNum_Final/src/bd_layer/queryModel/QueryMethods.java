@@ -241,14 +241,13 @@ public class QueryMethods {
 		}
 		return imageList;
 	}
-	
+
 	public ArrayList<Image> getDBImages() throws SQLException {
-		ResQ array = ConnectionBD.getData(con,
-				"select chemin,partager from Image");
+		ResQ array = ConnectionBD.getData(con, "select chemin,partager from Image");
 		ArrayList<Image> imageList = new ArrayList<Image>();
 
 		for (ArrayList<Object> row : array) {
-			imageList.add(new Image(row.get(0).toString(),row.get(1).toString() == "1" ? true : false));
+			imageList.add(new Image(row.get(0).toString(), row.get(1).toString() == "1" ? true : false));
 		}
 		return imageList;
 	}
@@ -293,7 +292,7 @@ public class QueryMethods {
 							row.get(2).toString(), getPhotoImpression(Integer.parseInt(row.get(0).toString()))));
 			codeList.get(codeList.size() - 1).setTypeImpression(
 					getTypeImpression(Integer.parseInt(row.get(0).toString()), row.get(3).toString()));
-			
+
 		}
 		return codeList;
 	}
@@ -310,18 +309,18 @@ public class QueryMethods {
 		return codeList;
 	}
 
-	public ArrayList<Photo> getPhotosImage(String chemin) throws SQLException{
+	public ArrayList<Photo> getPhotosImage(String chemin) throws SQLException {
 		ResQ array = ConnectionBD.getData(con, "select * from photo where chemin='" + chemin + "'");
 		ArrayList<Photo> codeList = new ArrayList<Photo>();
 
 		for (ArrayList<Object> row : array) {
-			codeList.add(new Photo(Integer.parseInt(row.get(0).toString()), row.get(1).toString(), row.get(2).toString(),
-					row.get(3).toString()));
+			codeList.add(new Photo(Integer.parseInt(row.get(0).toString()), row.get(1).toString(),
+					row.get(2).toString(), row.get(3).toString()));
 		}
 		return codeList;
-		
+
 	}
-	
+
 	/** ADD STuffs **/
 	public void addClient(Client client) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
@@ -355,10 +354,10 @@ public class QueryMethods {
 
 		String dateS = new SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation()).toUpperCase();
 
-		//System.out.println(dateS);
+		// System.out.println(dateS);
 
 		values.add(dateS);
-		
+
 		values.add(image.getFileAttente() + "");
 
 		ConnectionBD.addData(con, "image", values);
@@ -374,7 +373,7 @@ public class QueryMethods {
 
 	public int addPhoto(Photo photo) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
-		int lastIndex = getLastIndex("photo", "idphoto") ;
+		int lastIndex = getLastIndex("photo", "idphoto");
 		values.add(lastIndex + "");
 		values.add(photo.getChemin());
 		values.add(photo.getCommentaire());
@@ -394,13 +393,12 @@ public class QueryMethods {
 		values.add(impression.getIdClient() + "");
 		values.add(impression.getNom());
 		values.add(ti.type.name().toLowerCase());
-		
-		
+
 		// String dateS = new
 		// SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
-		
+
 		ConnectionBD.addData(con, "impression", values);
-		
+
 		Statement stmt = con.createStatement();
 		String colPool = " (IDIMPRESSION ,";
 		String valPool = " ('" + lastIndex + "' ,";
@@ -415,7 +413,7 @@ public class QueryMethods {
 		// Close the result set, statement and the connection
 
 		stmt.close();
-		
+
 		return lastIndex;
 	}
 
@@ -430,7 +428,7 @@ public class QueryMethods {
 		// SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
 		ConnectionBD.addData(con, "photo_impression", values);
 	}
-	
+
 	public void addPhotoImpressionTirage(PhotoImpression pi) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 
@@ -441,10 +439,10 @@ public class QueryMethods {
 		// String dateS = new
 		// SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
 		ConnectionBD.addData(con, "photo_impression", values);
-		values.remove(values.size()-1);
+		values.remove(values.size() - 1);
 		values.add(pi.quantite + "");
 		ConnectionBD.addData(con, "photo_tirage_impression", values);
-		
+
 	}
 
 	public void addCommandeImpression(int idCommande, CommandeImpression ci) throws SQLException {
@@ -457,15 +455,16 @@ public class QueryMethods {
 		// String dateS = new
 		// SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
 		ConnectionBD.addData(con, "commande_impression", values);
+		//ConnectionBD.updateData(con, "inventaire", conditions, values);
 	}
 
 	public int addCommande(Commande c) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		int newindex = getLastIndex("commande", "idcommande");
-		
+
 		values.add(newindex + "");
 		values.add(c.getIdClient() + "");
-		values.add(c.getIdAdresse() +"");
+		values.add(c.getIdAdresse() + "");
 		String dateS = new SimpleDateFormat("dd-MMM-yy").format(c.getDatePaiement());
 		values.add(dateS);
 		values.add(c.getMontant() + "");
@@ -475,7 +474,7 @@ public class QueryMethods {
 		values.add(c.getModeLivraison());
 
 		ConnectionBD.addData(con, "commande", values);
-		
+
 		return newindex;
 	}
 
@@ -556,7 +555,7 @@ public class QueryMethods {
 		conds.add(new Tuple("chemin", chemin + ""));
 		ConnectionBD.updateData(con, "image", conds, new ArrayList<Tuple>(Arrays.asList(values)));
 	}
-	
+
 	// update commande
 
 	public void updateCommande(int idCommande, Tuple... values) throws SQLException {
@@ -568,10 +567,10 @@ public class QueryMethods {
 	/** ------- MISC PART ----------- **/
 	public float prixImpression(Impression im) throws SQLException {
 
-		int idproduit = Integer.parseInt(im.getTypeImpression().attributes.get("IDPRODUIT") + "" );
+		int idproduit = Integer.parseInt(im.getTypeImpression().attributes.get("IDPRODUIT") + "");
 		ProduitInventaire pi = getProduitInventaire(idproduit);
 		return pi.getPrix();
-	}	
+	}
 
 	public ArrayList<Tuple> getStatImages() throws SQLException {
 		ResQ a = ConnectionBD.getData(con,
@@ -579,18 +578,38 @@ public class QueryMethods {
 		return (ArrayList<Tuple>) a.stream().map(s -> new Tuple(s.get(0).toString(), s.get(1).toString()))
 				.collect(Collectors.toList());
 	}
-	
-	public ArrayList<ProduitInventaire> getProduits() throws SQLException{
+
+	public ArrayList<ProduitInventaire> getProduits() throws SQLException {
 		String query = "select idProduit,nomCommercial,caracteristique from INVENTAIRE";
 		ResQ array = ConnectionBD.getData(con, query);
-		
+
 		ArrayList<ProduitInventaire> produitList = new ArrayList<ProduitInventaire>();
 
 		for (ArrayList<Object> row : array) {
-			produitList.add(new ProduitInventaire(Integer.parseInt(row.get(0).toString()),
-					row.get(1).toString(),row.get(2).toString()));
+			produitList.add(new ProduitInventaire(Integer.parseInt(row.get(0).toString()), row.get(1).toString(),
+					row.get(2).toString()));
 		}
 		return produitList;
+	}
+
+	public ArrayList<Commande> getCommandes() throws SQLException {
+		String query = "select idcommande, montant, statut, modeLivraison from COMMANDE";
+		ResQ array = ConnectionBD.getData(con, query);
+
+		ArrayList<Commande> commandList = new ArrayList<Commande>();
+
+		for (ArrayList<Object> row : array) {
+			commandList
+					.add(new Commande(Integer.parseInt(row.get(0).toString()), Float.parseFloat(row.get(1).toString()),
+							row.get(2).toString(), row.get(3).toString()));
+		}
+		return commandList;
+	}
+	
+	public void updateCommande(int idCommande) throws SQLException {
+		ArrayList<Tuple> conds = new ArrayList<Tuple>();
+		conds.add(new Tuple("idCommande", idCommande + ""));
+		ConnectionBD.updateData(con, "commande", conds, new ArrayList<Tuple>(Arrays.asList(new Tuple("statut","Annule"))));
 	}
 
 }

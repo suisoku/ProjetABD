@@ -48,7 +48,7 @@ public class ClientHandler {
 				client_queries.updateImage(path, values);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Erreur: " + e.getMessage());
 			}
 		});
 
@@ -59,7 +59,7 @@ public class ClientHandler {
 				client_queries.updateImage(path, values);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Erreur: " + e.getMessage());
 			}
 		});
 
@@ -82,7 +82,7 @@ public class ClientHandler {
 			genericMenu.initMenu(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Erreur: " + e.getMessage());
 		}
 
 	}
@@ -175,16 +175,16 @@ public class ClientHandler {
 		//STEP 3: Add impression
 		
 		try {lindex.set(client_queries.addImpression(finalImpression));}
-		catch (SQLException e) {e.printStackTrace();}
+		catch (SQLException e) {System.out.println("Erreur: " + e.getMessage());}
 		
 		//STEP 4 : choisir les photos a integrer ( tous les photos de tous les images que le client possede) 1/2
 		
 		try {images = client_queries.getClientImages(cl.getIdClient());}
-		catch (SQLException e) {e.printStackTrace();}
+		catch (SQLException e) {System.out.println("Erreur: " + e.getMessage());}
 		
 		for(Image im : images) {
 			try {photos.addAll(client_queries.getPhotosImage(im.getChemin()));} 
-			catch (SQLException e) {e.printStackTrace();}
+			catch (SQLException e) {System.out.println("Erreur: " + e.getMessage());}
 		}
 		
 		for(Photo p : photos) {
@@ -203,7 +203,7 @@ public class ClientHandler {
 		
 		// STEP 5 final insert the photos in the newly created impression
 		try {for(PhotoImpression pii : pImp) {client_queries.addPhotoImpression(pii);}}
-		catch (SQLException e) {e.printStackTrace();}
+		catch (SQLException e) {System.out.println("Erreur: " + e.getMessage());}
 		
 		System.out.println("Photos ajoutes avec succees");
 	}
@@ -240,7 +240,7 @@ public class ClientHandler {
 						commImps.add(new CommandeImpression(e,q));
 					}
 			));} 
-		catch (NumberFormatException | SQLException e) {e.printStackTrace();}
+		catch (NumberFormatException | SQLException e) {System.out.println("Erreur: " + e.getMessage());}
 
 		System.out.println("Choisissez les impressions a commander [pour finir taper F]");
 
@@ -265,7 +265,7 @@ public class ClientHandler {
 				float subprice = 0;
 				
 				try{subprice = client_queries.prixImpression(ci.impression);}
-				catch (SQLException e) {e.printStackTrace();}
+				catch (SQLException e) {System.out.println("Erreur: " + e.getMessage());}
 			
 				System.out.println("Commande :" + ci.impression.getNom() + " P :" + subprice + " P x Q :" + subprice*ci.quantite);
 				
@@ -331,7 +331,7 @@ public class ClientHandler {
 			genericMenu.initMenu(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Erreur: " + e.getMessage());
 		}
 	}
 
@@ -365,7 +365,7 @@ public class ClientHandler {
 						client_queries.deleteClient(id);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						System.out.println("Erreur: " + e.getMessage());
 					}
 				});
 			}
@@ -373,7 +373,7 @@ public class ClientHandler {
 			genericMenu.initMenu(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Erreur: " + e.getMessage());
 		}
 	}
 
@@ -391,7 +391,7 @@ public class ClientHandler {
 						client_queries.deleteImage(path);
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						System.out.println("Erreur: " + e.getMessage());
 					}
 				});
 			}
@@ -399,7 +399,7 @@ public class ClientHandler {
 			genericMenu.initMenu(false);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Erreur: " + e.getMessage());
 		}
 	}
 
@@ -420,7 +420,7 @@ public class ClientHandler {
 			}
 			System.out.println("----------------------------------------");
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("Erreur: " + e.getMessage());
 		}
 	}
 

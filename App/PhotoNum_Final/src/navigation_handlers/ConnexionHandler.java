@@ -32,10 +32,10 @@ public class ConnexionHandler {
 					System.out.println("Informations saisies incorrectes. Veuillez réessayer!");
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Erreur: " + e.getMessage());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Erreur lors de la connexion: " + e.getMessage());
 			}
 		});
 
@@ -57,10 +57,10 @@ public class ConnexionHandler {
 					System.out.println("Informations saisies incorrectes. Veuillez réessayer!");
 			} catch (NumberFormatException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Erreur: " + e.getMessage());
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Erreur lors de la connexion: " + e.getMessage());
 			}
 		});
 
