@@ -432,7 +432,7 @@ begin
       select nvl(count(c.idCommande),0) into nbCommandeAPrep
       from COMMANDE c join COMMANDE_IMPRESSION ci on c.IDCOMMANDE=ci.IDCOMMANDE join PHOTO_IMPRESSION pi on ci.IDIMPRESSION=pi.IDIMPRESSION
         join PHOTO p on p.IDPHOTO=pi.IDPHOTO join IMAGE I on p.CHEMIN = I.CHEMIN
-      where c.statut='EncoursPreparation' and i.chemin=unTuple.chemin;
+      where c.statut='EnCoursPreparation' and i.chemin=unTuple.chemin;
 
 
       if nbCommandeAPrep = 0 then
