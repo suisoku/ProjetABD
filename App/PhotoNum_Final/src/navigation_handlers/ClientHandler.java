@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -17,7 +18,10 @@ import dataInterfaces.CodePromo;
 import dataInterfaces.Commande;
 import dataInterfaces.CommandeImpression;
 import dataInterfaces.Image;
+import dataInterfaces.Impression;
 import dataInterfaces.Photo;
+import dataInterfaces.PhotoImpression;
+import dataInterfaces.TypeImpression;
 import navigation_handlers.core.GenericMenu;
 
 public class ClientHandler {
@@ -90,17 +94,67 @@ public class ClientHandler {
 	}
 
 	public static void createImpression() {
-		GenericMenu interactionTypeChoice = new GenericMenu();
-
-		interactionTypeChoice.addMenuItem("0", "Supprimer impression", () -> {
-			ImpressionHandler.delete();
-		});
-
-		interactionTypeChoice.addMenuItem("1", "Modifier impression", () -> {
-			ImpressionHandler.update();
-		});
-
-		interactionTypeChoice.initMenu(false);
+		Client cl = ConnexionHandler.userClient;
+		String nomImpression;
+		AtomicReference<TypeImpression.TypesI> typeImp= new AtomicReference<TypeImpression.TypesI>();
+		AtomicReference<String> nomImp= new AtomicReference<String>();
+		AtomicInteger lindex= new AtomicInteger(0);
+		
+		ArrayList<Photo> photos = new ArrayList<Photo>();
+		ArrayList<PhotoImpression> pImp = new ArrayList<PhotoImpression>();
+		ArrayList<Image> images = new ArrayList<Image>();
+		GenericMenu enumType = new GenericMenu();
+		GenericMenu photoMenu = new GenericMenu();
+		//int lindex = 0;
+		
+		//STEP 1 : choisir le nom de l'impression
+		System.out.println("Tapez le nom de l'impression");
+	    nomImp.set(LectureClavier.lireChaine());
+	    
+	    
+	    // STEP2choisir le type de l'impression
+		enumType.addMenuItem("1", "CADRE", () -> {typeImp.set(TypeImpression.TypesI.CADRE);});
+		enumType.addMenuItem("2", "AGENDA", () -> {typeImp.set(TypeImpression.TypesI.AGENDA);});
+		enumType.addMenuItem("3", "CALENDRIER", () -> {typeImp.set(TypeImpression.TypesI.CALENDRIER);});
+		enumType.addMenuItem("4", "ALBUM", () -> {typeImp.set(TypeImpression.TypesI.ALBUM);});
+		enumType.addMenuItem("5", "TIRAGE", () -> {typeImp.set(TypeImpression.TypesI.TIRAGE);});
+		
+		enumType.initMenu(false);
+		
+		//STEP 2 BIS parametrer les attributs de l'impression A faire
+		
+		//STEP 3: Add impression
+		
+		try {lindex.set(client_queries.addImpression(new Impression(0, cl.getIdClient(), nomImp.get(), null)));}
+		catch (SQLException e) {e.printStackTrace();}
+		
+		//STEP 4 : choisir les photos a integrer ( tous les photos de tous les images que le client possede) 1/2
+		
+		try {images = client_queries.getClientImages(cl.getIdClient());}
+		catch (SQLException e) {e.printStackTrace();}
+		
+		for(Image im : images) {
+			try {photos.addAll(client_queries.getPhotosImage(im.getChemin()));} 
+			catch (SQLException e) {e.printStackTrace();}
+		}
+		
+		for(Photo p : photos) {
+			photoMenu.addMenuItem(p.getIdPhoto() + "", p.getTypeRetouche(),
+				()->{
+					 //System.out.println("Saisssez les specifications particulieres");
+					 pImp.add(new PhotoImpression(lindex.get(), p, nomImp.get()));}
+			);
+		}
+		photoMenu.initMenu(false);
+		
+		// STEP 4 bis + photo des images partagees 2/2 A Faire
+		
+		
+		// STEP 5 final insert the photos in the newly created impression
+		try {for(PhotoImpression pii : pImp) {client_queries.addPhotoImpression(pii);}}
+		catch (SQLException e) {e.printStackTrace();}
+		
+		
 	}
 
 	public static void updateImpression() {

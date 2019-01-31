@@ -300,7 +300,19 @@ public class QueryMethods {
 		return codeList;
 	}
 
+	public ArrayList<Photo> getPhotosImage(String chemin) throws SQLException{
+		ResQ array = ConnectionBD.getData(con, "select * from photo where chemin='" + chemin + "'");
+		ArrayList<Photo> codeList = new ArrayList<Photo>();
 
+		for (ArrayList<Object> row : array) {
+			codeList.add(new Photo(Integer.parseInt(row.get(0).toString()), row.get(1).toString(), row.get(2).toString(),
+					row.get(3).toString()));
+		}
+		return codeList;
+		
+	}
+	
+	/** ADD STuffs **/
 	public void addClient(Client client) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 
@@ -365,11 +377,11 @@ public class QueryMethods {
 		ConnectionBD.addData(con, "photo", values);
 	}
 
-	public void addImpression(Impression impression) throws SQLException {
+	public int addImpression(Impression impression) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
 		TypeImpression ti = impression.getTypeImpression();
-
-		values.add(getLastIndex("impression", "idimpression") + "");
+		int lastIndex = getLastIndex("impression", "idimpression");
+		values.add(lastIndex + "");
 		values.add(impression.getIdClient() + "");
 		values.add(impression.getNom());
 		values.add(ti.type.name());
@@ -391,6 +403,8 @@ public class QueryMethods {
 		// Close the result set, statement and the connection
 
 		stmt.close();
+		
+		return lastIndex;
 	}
 
 	public void addPhotoImpression(PhotoImpression pi) throws SQLException {
