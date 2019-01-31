@@ -32,7 +32,9 @@ public class ClientBot extends Thread{
 			
 			
 			// add photo
+			
 			Image image1 = new Image("/skur/skur1.jpg", idClient, "2K", false, new Date(), 0);
+			
 			Image image2 = new Image("/skur/skur2.jpg", idClient, "4K", false, new Date(), 0);
 			Image image3 = new Image("/skur/skur3.jpg", idClient, "4K", false, new Date(), 0);
 			Image image4 = new Image("/skur/skur4.jpg", idClient, "8K", true, new Date(), 0);
@@ -45,7 +47,12 @@ public class ClientBot extends Thread{
 				 q.addImage(image5);} 
 			catch (NumberFormatException | SQLException e) {e.printStackTrace();}
 			
-			
+			System.out.println("Creation image :" + image1.getChemin() + "Partage ? " + image1.isPartager());
+			System.out.println("Creation image :" + image2.getChemin() + "Partage ? " + image2.isPartager());
+			System.out.println("Creation image :" + image3.getChemin() + "Partage ? " + image3.isPartager());
+			System.out.println("Creation image :" + image4.getChemin() + "Partage ? " + image4.isPartager());
+			System.out.println("Creation image :" + image5.getChemin() + "Partage ? " + image5.isPartager());
+			System.out.println("");
 		}
 		else {
 			System.out.println("ERREUR Connection client");
