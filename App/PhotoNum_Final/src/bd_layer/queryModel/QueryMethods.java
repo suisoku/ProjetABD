@@ -384,14 +384,17 @@ public class QueryMethods {
 		values.add(lastIndex + "");
 		values.add(impression.getIdClient() + "");
 		values.add(impression.getNom());
-		values.add(ti.type.name());
-
+		values.add(ti.type.name().toLowerCase());
+		
+		
 		// String dateS = new
 		// SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
-		// ConnectionBD.addData(con, "impression", values);
+		
+		ConnectionBD.addData(con, "impression", values);
+		
 		Statement stmt = con.createStatement();
 		String colPool = " (IDIMPRESSION ,";
-		String valPool = " ('" + impression.getIdImpression() + "' ,";
+		String valPool = " ('" + lastIndex + "' ,";
 		for (Entry<String, Object> e : ti.attributes.entrySet()) {
 			colPool += "" + e.getKey() + " ,";
 			valPool += "'" + e.getValue() + "' ,";

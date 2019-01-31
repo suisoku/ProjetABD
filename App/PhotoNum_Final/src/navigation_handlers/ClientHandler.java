@@ -1,6 +1,7 @@
 package navigation_handlers;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -122,10 +123,64 @@ public class ClientHandler {
 		enumType.initMenu(false);
 		
 		//STEP 2 BIS parametrer les attributs de l'impression A faire
+		HashMap<String, Object> params =  new HashMap<String, Object>();
+		
+		switch (typeImp.get().name()) {
+		
+		   case "CADRE" : 
+			   System.out.println("Choisir Produit : ");
+			   System.out.println("Produit 1");
+			   params.put("IDPRODUIT", "1");
+			   System.out.println("Mise en page souhaite : ");
+			   params.put("MISEENPAGE", LectureClavier.lireChaine());
+			   break;
+			   
+		   case "AGENDA" : 
+			   System.out.println("Choisir Produit : ");
+			   System.out.println("Produit 2");
+			   params.put("IDPRODUIT", "2");
+			   System.out.println("Type Agenda souhaite : ");
+			   params.put("TYPEAGENDA", LectureClavier.lireChaine());
+			   System.out.println("Modele souhaite : ");
+			   params.put("MODELE", LectureClavier.lireChaine());
+			   break;
+			   
+		   case "CALENDRIER" : 
+			   System.out.println("Choisir Produit : ");
+			   System.out.println("Produit 3");
+			   params.put("IDPRODUIT", "3");
+			   System.out.println("Type Calendrier souhaite : ");
+			   params.put("TYPECALENDRIER", LectureClavier.lireChaine());
+			   break;
+			   
+		   case "ALBUM" : 
+			   System.out.println("Choisir Produit : ");
+			   System.out.println("Produit 5");
+			   params.put("IDPRODUIT", "5");
+			   System.out.println("Titre souhaite : ");
+			   params.put("TITRE", LectureClavier.lireChaine());
+			   System.out.println("Mise en page souhaite : ");
+			   params.put("MISEENPAGE", LectureClavier.lireChaine());
+			   break;
+			   
+		   case "TIRAGE" : 
+			   System.out.println("Choisir Produit : ");
+			   System.out.println("Produit 4");
+			   params.put("IDPRODUIT", "4");
+			   System.out.println("FORMAT IMPRESSION  souhaite : ");
+			   params.put("FORMATIMPRESSION", LectureClavier.lireChaine());
+			   System.out.println("Nb exemplaire  souhaite : ");
+			   params.put("NBEXEMPLAIRE", LectureClavier.lireChaine());
+			   break;
+		}
+		
+		TypeImpression ti = new TypeImpression(typeImp.get().name(), params);
+		Impression finalImpression = new Impression(0, cl.getIdClient(), nomImp.get(), null);
+		finalImpression.setTypeImpression(ti);
 		
 		//STEP 3: Add impression
 		
-		try {lindex.set(client_queries.addImpression(new Impression(0, cl.getIdClient(), nomImp.get(), null)));}
+		try {lindex.set(client_queries.addImpression(finalImpression));}
 		catch (SQLException e) {e.printStackTrace();}
 		
 		//STEP 4 : choisir les photos a integrer ( tous les photos de tous les images que le client possede) 1/2
@@ -139,12 +194,14 @@ public class ClientHandler {
 		}
 		
 		for(Photo p : photos) {
-			photoMenu.addMenuItem(p.getIdPhoto() + "", p.getTypeRetouche(),
+		photoMenu.addMenuItem(p.getIdPhoto() + "", p.getTypeRetouche(),
 				()->{
 					 //System.out.println("Saisssez les specifications particulieres");
 					 pImp.add(new PhotoImpression(lindex.get(), p, nomImp.get()));}
 			);
 		}
+		
+		System.out.println("Choisissez les photos a integrer dans l'impression : ");
 		photoMenu.initMenu(false);
 		
 		// STEP 4 bis + photo des images partagees 2/2 A Faire
@@ -154,7 +211,7 @@ public class ClientHandler {
 		try {for(PhotoImpression pii : pImp) {client_queries.addPhotoImpression(pii);}}
 		catch (SQLException e) {e.printStackTrace();}
 		
-		
+		System.out.println("Photos ajoutes avec succees");
 	}
 
 	public static void updateImpression() {
