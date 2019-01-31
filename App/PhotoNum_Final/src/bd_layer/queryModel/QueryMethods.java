@@ -49,7 +49,6 @@ public class QueryMethods {
 			array = ConnectionBD.getData(con,
 					"select idAdmin from " + table + " where mail='" + mail + "' and mdp='" + mdp + "'");
 
-		System.out.println(array.get(0).toString());
 		return array.isEmpty() ? 0 : (Integer.parseInt(array.get(0).get(0).toString()));
 
 	}
@@ -351,8 +350,6 @@ public class QueryMethods {
 		
 		values.add(image.getFileAttente() + "");
 
-		values.add(image.getFileAttente() + "");
-
 		ConnectionBD.addData(con, "image", values);
 	}
 
@@ -364,10 +361,10 @@ public class QueryMethods {
 		ConnectionBD.deleteData(con, "image", cond);
 	}
 
-	public void addPhoto(Photo photo) throws SQLException {
+	public int addPhoto(Photo photo) throws SQLException {
 		ArrayList<String> values = new ArrayList<String>();
-
-		values.add(getLastIndex("photo", "idphoto") + "");
+		int lastIndex = getLastIndex("photo", "idphoto") ;
+		values.add(lastIndex + "");
 		values.add(photo.getChemin());
 		values.add(photo.getCommentaire());
 		values.add(photo.getTypeRetouche());
@@ -375,6 +372,7 @@ public class QueryMethods {
 		// String dateS = new
 		// SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
 		ConnectionBD.addData(con, "photo", values);
+		return lastIndex;
 	}
 
 	public int addImpression(Impression impression) throws SQLException {
@@ -420,6 +418,22 @@ public class QueryMethods {
 		// String dateS = new
 		// SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
 		ConnectionBD.addData(con, "photo_impression", values);
+	}
+	
+	public void addPhotoImpressionTirage(PhotoImpression pi) throws SQLException {
+		ArrayList<String> values = new ArrayList<String>();
+
+		values.add(pi.photo.getIdPhoto() + "");
+		values.add(pi.idImpression + "");
+		values.add(pi.specPart);
+
+		// String dateS = new
+		// SimpleDateFormat("dd-MMM-yy").format(image.getDateUtilisation());
+		ConnectionBD.addData(con, "photo_impression", values);
+		values.remove(values.size()-1);
+		values.add(pi.quantite + "");
+		ConnectionBD.addData(con, "photo_tirage_impression", values);
+		
 	}
 
 	public void addCommandeImpression(int idCommande, CommandeImpression ci) throws SQLException {
