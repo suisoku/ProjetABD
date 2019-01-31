@@ -574,7 +574,7 @@ public class QueryMethods {
 
 		for (ArrayList<Object> row : array) {
 			produitList.add(new ProduitInventaire(Integer.parseInt(row.get(0).toString()),
-					row.get(1).toString(),row.get(1).toString()));
+					row.get(1).toString(),row.get(2).toString()));
 		}
 		return produitList;
 	}
