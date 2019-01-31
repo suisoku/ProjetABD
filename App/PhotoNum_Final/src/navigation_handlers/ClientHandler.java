@@ -165,8 +165,6 @@ public class ClientHandler {
 			   params.put("IDPRODUIT", "4");
 			   System.out.println("FORMAT IMPRESSION  souhaite : ");
 			   params.put("FORMATIMPRESSION", LectureClavier.lireChaine());
-			   System.out.println("Nb exemplaire  souhaite : ");
-			   params.put("NBEXEMPLAIRE", LectureClavier.lireChaine());
 			   break;
 		}
 		
