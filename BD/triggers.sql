@@ -142,7 +142,7 @@ create or replace trigger mailSending
 -- apartients au client qui a effectué la cmd, ou partagées par un autre client --
 
 
-create or replace trigger commandePossible1
+/*create or replace trigger commandePossible1
   before insert or update on COMMANDE_IMPRESSION
   for each row
   declare
@@ -157,7 +157,7 @@ create or replace trigger commandePossible1
       then raise_application_error(-20100,' image non paratgée');
     end if;
   end;
-/
+/ */
 
 
 --Des codes de promo sont donnés et ne sont utilisables qu'une seule fois par client
@@ -411,6 +411,12 @@ begin
         if unTuple.fileAttente = '1' then
           update IMAGE set FILEATTENTE='0' where chemin=unTuple.chemin;
           update IMAGE set partager='0' where chemin=unTuple.chemin;
+        else
+          delete from PHOTO_IMPRESSION pi where pi.idPhoto in (select IDPHOTO
+                                                          FROM PHOTO
+                                                          where CHEMIN=unTuple.chemin);
+          delete from photo where chemin=unTuple.chemin;
+          delete from IMAGE where chemin=unTuple.chemin;
         end if;
 
       end if;
