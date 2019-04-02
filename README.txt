@@ -1,5 +1,9 @@
-RULES TO RESPECT :
+# Java Application simulating a service of photo printing 
 
-1 DO NOT TOUCH MASTER BRANCH
-2 ALWAYS CREATE A BRANCH WHEN ADDING A FEATURE
-3 DO NOT MERGE A BRANCH IF YOU DIDNT TESTED THAT WORKS WITHOUT ERRORS
+Some of the exercises includes :
+
+* Oracle Database modelisation 
+* Implement triggers , constraints and automated tasks in the database
+* Implement a client application / provider application
+* Communication with DB using JDBC driver 
+* Threads
